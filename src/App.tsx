@@ -4,15 +4,28 @@ import './App.css';
 import Admin from './pages/Admin';
 import Root from './pages/Root';
 import AllBookings from './pages/AllBookings';
+import BookRoom from './pages/BookRoom';
+import RoomBookings from './pages/RoomBookings';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Root />,
+    Component: Root,
     children: [
-      { index: true, element: <Home /> },
-      { path: '/admin', element: <Admin /> },
-      { path: '/bookings', element: <AllBookings /> },
+      { index: true, Component: Home },
+      { path: '/admin', Component: Admin },
+      { path: '/bookings',
+        children: [
+          {index : true, Component: AllBookings},
+          {path: ':roomId', Component: BookRoom}
+        ],
+      },
+      { path: '/room',
+        children: [
+          {index: true, Component: AllBookings},
+          {path: ':roomId', Component: RoomBookings}
+        ]
+      }
     ]
   }
 ]);
