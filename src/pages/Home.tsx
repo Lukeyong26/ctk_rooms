@@ -25,21 +25,24 @@ export default function Home() {
   }, [selectedDate]);
 
   return (
-    <div className="grid grid-cols-1 gap-4 w-full">
+    <div>
+      <p>Select Date:</p>
       <Datepicker onChange={(e)=>{
         if (e) {
           const date = new Date(e).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
           setSelectedDate(date);
         }
       }}/>
-      {allRooms.map((room) => {
-        const roomBookings = todaysBookings.filter((booking) => booking.roomId === room.id);
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 w-full mt-10">
+        
+        {allRooms.map((room) => {
+          const roomBookings = todaysBookings.filter((booking) => booking.roomId === room.id);
 
-        return (
-          <RoomCard key={room.id} imageUrl={"https://thumbs.dreamstime.com/b/office-room-7881663.jpg"} id={room.id} title={room.name} desc={room.desc} bookings={roomBookings} />
-        )
-      })}
+          return (
+            <RoomCard key={room.id} imageUrl={"https://thumbs.dreamstime.com/b/office-room-7881663.jpg"} id={room.id} title={room.name} desc={room.desc} bookings={roomBookings} />
+          )
+        })}
+      </div>
     </div>
   );
-
 }

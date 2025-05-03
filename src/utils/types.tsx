@@ -1,4 +1,5 @@
 export interface Bookings {
+    id: string;
     date: string;
     roomId: string;
     bookedBy: string;

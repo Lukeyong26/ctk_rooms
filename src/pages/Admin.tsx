@@ -1,15 +1,28 @@
 import { Room } from "../utils/types"
 import { addRoom, addBooking, getRoomsList, getBookingsByDateAndRoom, deleteBooking } from "../utils/firebase"
 import { Button, Datepicker, Label, Select, TextInput } from "flowbite-react";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import TimePicker from "../components/TimePicker";
+import { useNavigate } from "react-router";
 
 export default function Admin() {
 
-  const [roomsList, setRoomsList] = useState<Room[]>([]);
+  const initDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  const nav = useNavigate();
 
+  //Delete Booking
+  const [roomsList, setRoomsList] = useState<Room[]>([]);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<string>(new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }));
+  const [selectedDate, setSelectedDate] = useState<string>(initDate);
   const [bookingsList, setBookingsList] = useState<any[]>([]);
+
+  // Booking Room
+  const [roomId, setRoomId] = useState<string>('');
+  const [date, setDate] = useState<string>(initDate);
+  const [bookings, setBookings] = useState<any[]>([]);
+  const [startTime, setStartTime] = useState<string>('');
+  const [endTime, setEndTime] = useState<string>('');
+  const [bookedBy, setBookedBy] = useState<string>('');
 
   useEffect(() => {
     const fetchRoomsList = async () => {
@@ -19,10 +32,21 @@ export default function Admin() {
     fetchRoomsList();
   },[]);
 
+  // For Booking Room
+  useEffect(() => {
+    const fetchBookings = async () => {
+      if (roomId && date) {
+        const bookings = await getBookingsByDateAndRoom(date, roomId);
+        setBookings(bookings || []);
+      }
+    }
+    fetchBookings();
+  }, [roomId, date, startTime, endTime]);
+
+  // For Deleting Booking
   useEffect(() => {
     console.log("Selected Room: ", selectedRoom);
     console.log("Selected Date: ", selectedDate);
-
     if (selectedRoom && selectedDate) {
       const fetchBookings = async () => {
         const bookings = await getBookingsByDateAndRoom(selectedDate, selectedRoom);
@@ -31,7 +55,6 @@ export default function Admin() {
       }
       fetchBookings();
     }
-
   }, [selectedRoom, selectedDate]);
 
   const handleAddRoom = async (e : any) => {
@@ -50,40 +73,33 @@ export default function Admin() {
 
   const handleMakeBooking = async (e : any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const date = formData.get('date') as string;
-    const roomId = formData.get('roomId') as string;
-    const bookedBy = formData.get('bookedBy') as string;
-    const startTime = formData.get('startTime') as string;
-    const endTime = formData.get('endTime') as string;
-
-    const stringDate = new Date(date).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
-
-
+    if (roomId === undefined) {
+      return;
+    }
+    if (date === '' || startTime === '' || endTime === '' || bookedBy === '' || roomId === '') {
+      alert("Please fill all the fields");
+      return;
+    }
     const booking = {
-      date: stringDate,
+      date: date,
       roomId: roomId,
       bookedBy: bookedBy,
       startTime: startTime,
       endTime: endTime
     }
-
-    console.log(booking);
-
-    const roomBookings = await getBookingsByDateAndRoom(stringDate, roomId);
-    
-    const isRoomBooked = roomBookings.some((booking) => {
+    const bookings = await getBookingsByDateAndRoom(date, roomId);
+    const isRoomBooked = bookings.some((booking) => {
       return (startTime < booking.endTime && endTime > booking.startTime);
     });
-
     if (isRoomBooked) {
-      alert("Room is already booked for the selected time. Please choose another time.");
+      alert("OPPS! Sorry the Room was just booked. Please choose another time.");
+      setStartTime('');
+      setEndTime('');
       return;
-    } else {
-      await addBooking(booking);
-      alert("Booking made successfully!");
     }
-    (document.getElementById('add-booking-form') as HTMLFormElement).reset();
+    await addBooking(booking);
+    alert("Booking made successfully");
+    nav('/admin');
   }
 
   const handleDeleteBooking = async (id: string) => {
@@ -91,61 +107,89 @@ export default function Admin() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 w-full gap-10 p-10">
-      <form id="add-room-form" onSubmit={handleAddRoom} className="flex w-full max-w-md flex-col gap-4">
-        <Label htmlFor="name" >Add a Room</Label>
-        <TextInput type="text" name="name" placeholder="Room Name" required />
-        <TextInput type="text" name="desc" placeholder="Room Description" required />
-        <Button color="alternative" type="submit">Add Room</Button>
-      </form>
+    <div className="flex flex-col items-center w-full gap-10 p-10">
 
-      <form id="add-booking-form" onSubmit={handleMakeBooking} className="flex w-full max-w-md flex-col gap-4">
-        <Label htmlFor="name" >Make a Booking</Label>
-        <Select id="roomId" name="roomId" required>
-          {roomsList.map((room) => (
-            <option key={room.id} value={room.id}>{room.name}</option>
-          ))}
-        </Select>
-        <Datepicker id="date" name="date" required={true} />
-        <TextInput type="text" name="bookedBy" placeholder="Booked By" required />
-        
-        <TextInput type="text" name="startTime" placeholder="Start Time" required />
-        <TextInput type="text" name="endTime" placeholder="End Time" required />
-        
-        <Button color="alternative" type="submit">Make Booking</Button>
-      </form>
+      {/* Add a Room */}
+      <div className="collapse collapse-arrow bg-base-100 border border-base-300">
+        <input type="radio" name="my-accordion-2"/>
+        <div className="collapse-title font-semibold">Add a Room</div>
+        <div className="collapse-content">
+          <form id="add-room-form" onSubmit={handleAddRoom} className="flex w-full max-w-md flex-col gap-4">
+            <TextInput type="text" name="name" placeholder="Room Name" required />
+            <TextInput type="text" name="desc" placeholder="Room Description" required />
+            <Button color="alternative" type="submit">Add Room</Button>
+          </form>
+        </div>
+      </div>
 
-      <form className="flex w-full max-w-md flex-col gap-4">
-        <Label htmlFor="name" >Delete a Booking</Label>
-        <Select onChange={(e) => setSelectedRoom(e.target.value)} id="roomId" name="roomId" required>
-          <option value="">Select a Room</option>
-          {roomsList.map((room) => (
-            <option key={room.id} value={room.id}>{room.name}</option>
-          ))}
-        </Select>
-        <Datepicker onChange={(e) => setSelectedDate(e?.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '')} id="date" name="date" required={true} />
-        {selectedDate && selectedRoom && (
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="bookings">Bookings:</Label>
-            {bookingsList.length === 0 ? (
-              <p className="text-center">No bookings found</p>
-            ) : (
-              <div>
-                {bookingsList.map((booking, index) => (
-                  <div key={index} className="flex flex-row justify-between items-center bg-gray-50 border-gray-300 border-1 dark:bg-gray-700 p-2 rounded-lg">
-                    <p>{booking.bookedBy}</p>
-                    <p>{booking.startTime} - {booking.endTime}</p>
-                    <Button color="alternative" size="xs" onClick={() => {
-                      handleDeleteBooking(booking.id);
-                      setBookingsList(bookingsList.filter((b) => b.id !== booking.id));
-                    }}>Delete</Button>
-                  </div>
+      {/* Make A Room Booking */}
+      <div className="collapse collapse-arrow bg-base-100 border border-base-300">
+        <input type="radio" name="my-accordion-2" />
+        <div className="collapse-title font-semibold">Make A Room Booking</div>
+        <div className="collapse-content text-sm">
+          <div className="flex w-full">
+            <div className="flex w-full max-w-md flex-col gap-4">
+              <Datepicker id="date" name="date" required onChange={(e) => setDate(e?.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '')} />
+
+              <Select onChange={(e) => setRoomId(e.target.value)} id="roomId" name="roomId" required>
+                <option value="">Select a Room</option>
+                {roomsList.map((room) => (
+                  <option key={room.id} value={room.id}>{room.name}</option>
                 ))}
-              </div>
-            )}
+              </Select>
+              
+              <TimePicker bookings={bookings} setStartTime={setStartTime} setEndTime={setEndTime}/>
+              <TextInput type="text" name="bookedBy" placeholder="Booked By" onChange={(e) => setBookedBy(e.target.value)}/>
+              <button className="btn" onClick={handleMakeBooking}>Make Booking</button>
+            </div>
           </div>
-        )}        
-      </form>
+        </div>
+      </div>
+
+      {/* Delete A Booking */}
+      <div className="collapse collapse-arrow bg-base-100 border border-base-300">
+        <input type="radio" name="my-accordion-2" />
+        <div className="collapse-title font-semibold">Delete A Booking</div>
+        <div className="collapse-content text-sm">
+          <form className="flex w-full max-w-md flex-col gap-4">
+            <Label htmlFor="name" >Delete a Booking</Label>
+            <Datepicker onChange={(e) => setSelectedDate(e?.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '')} id="date" name="date" required={true} />
+
+            <Select onChange={(e) => setSelectedRoom(e.target.value)} id="roomId" name="roomId" required>
+              <option value="">Select a Room</option>
+              {roomsList.map((room) => (
+                <option key={room.id} value={room.id}>{room.name}</option>
+              ))}
+            </Select>
+            <div className="min-h-80 h-full">
+              {selectedDate && selectedRoom && (
+                <div className="flex flex-col gap-2">
+                  <Label htmlFor="bookings">Bookings:</Label>
+                  {bookingsList.length === 0? (
+                    <p className="text-center">No bookings found</p>
+                  ) : (
+                    <div>
+                      {bookingsList.map((booking, index) => (
+                        <div key={index} className="flex flex-row justify-between items-center bg-gray-50 border-gray-300 border-1 dark:bg-gray-700 p-2 rounded-lg">
+                          <p>{booking.bookedBy}</p>
+                          <p>{booking.startTime} - {booking.endTime}</p>
+                          <Button color="alternative" size="xs" onClick={() => {
+                            handleDeleteBooking(booking.id);
+                            setBookingsList(bookingsList.filter((b) => b.id !== booking.id));
+                          }}>Delete</Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}     
+            </div>
+               
+          </form>
+        </div>
+      </div>
+
+      
     </div>
   )
 }

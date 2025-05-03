@@ -43,7 +43,7 @@ export default function AllBookings() {
 
   return (
     <div className='w-full p-4'>
-      <div className='w-1/4 mb-4'>
+      {/* <div className='w-1/4 mb-4'>
         <Datepicker onChange={(e)=>{
           if (e) {
             const date = new Date(e).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -53,8 +53,8 @@ export default function AllBookings() {
       </div>
       {
         renderRooms()
-      }
-
+      } */}
+      Page not found
     </div>
   )
 }
