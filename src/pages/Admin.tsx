@@ -17,12 +17,17 @@ export default function Admin() {
   const [bookingsList, setBookingsList] = useState<any[]>([]);
 
   // Booking Room
+  const [bookings, setBookings] = useState<any[]>([]);
   const [roomId, setRoomId] = useState<string>('');
   const [date, setDate] = useState<string>(initDate);
-  const [bookings, setBookings] = useState<any[]>([]);
   const [startTime, setStartTime] = useState<string>('');
   const [endTime, setEndTime] = useState<string>('');
   const [bookedBy, setBookedBy] = useState<string>('');
+  const [multipleBookings, setMultipleBookings] = useState<boolean>(false);
+  const [multiFormData, setmultiFormData] = useState<any>({
+    repeatValue: 0, repeatType: 'day', endType: 'eoy', endDate: ''
+  });
+  
 
   useEffect(() => {
     const fetchRoomsList = async () => {
@@ -80,6 +85,51 @@ export default function Admin() {
       alert("Please fill all the fields");
       return;
     }
+
+    if (multipleBookings) { 
+      const repeatValue = parseInt(multiFormData.repeatValue);
+      const repeatType = parseInt(multiFormData.repeatType);
+      const endType = multiFormData.endType;
+      const endDate = multiFormData.endDate;
+
+      const parts = date.split('/');
+      const formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+      let dateObj = new Date(formattedDate);
+      let endDateObj = new Date();
+
+      if (endType === 'eoy') {
+        endDateObj.setMonth(11);
+        endDateObj.setDate(31);
+      } else {
+        endDateObj = new Date(endDate);
+      }
+
+      console.log("Date: " + dateObj + " End Date: " + endDateObj);
+
+      while (dateObj <= endDateObj) {
+        const booking = {
+          date: dateObj.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+          roomId: roomId,
+          bookedBy: bookedBy,
+          startTime: startTime,
+          endTime: endTime
+        }
+        await addBooking(booking);
+        console.log("Booking made for: ", booking);
+        if (repeatType === 1) {
+          dateObj.setDate(dateObj.getDate() + repeatValue);
+        } else if (repeatType === 2) {
+          dateObj.setDate(dateObj.getDate() + (repeatValue * 7));
+        } else if (repeatType === 3) {
+          dateObj.setMonth(dateObj.getMonth() + repeatValue);
+        }
+      }
+      alert("Multi Booking made successfully");
+      // nav('/admin');
+      return;
+    }
+
     const booking = {
       date: date,
       roomId: roomId,
@@ -97,9 +147,28 @@ export default function Admin() {
       setEndTime('');
       return;
     }
+
     await addBooking(booking);
     alert("Booking made successfully");
     nav('/admin');
+  }
+
+  const handleMultiForm = (e: any) => {
+    const { name, value } = e.target;
+    if (name === 'endDate') {
+      const dateValue = new Date(value);
+      const formattedDate = dateValue.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      setmultiFormData((prevState: any) => ({
+        ...prevState,
+        [name]: formattedDate
+      }));
+      return;
+    }
+    setmultiFormData((prevState: any) => ({
+      ...prevState,
+      [name]: value
+    }));
+    console.log(multiFormData);
   }
 
   const handleDeleteBooking = async (id: string) => {
@@ -140,6 +209,34 @@ export default function Admin() {
               
               <TimePicker bookings={bookings} setStartTime={setStartTime} setEndTime={setEndTime}/>
               <TextInput type="text" name="bookedBy" placeholder="Booked By" onChange={(e) => setBookedBy(e.target.value)}/>
+              <label className="label" htmlFor="multiple-bookings">
+                <input onChange={()=>setMultipleBookings(!multipleBookings)} type="checkbox" className="checkbox mr-2" />
+                Recurrent Bookings
+              </label>
+              {multipleBookings && (
+                <div className="flex flex-col gap-2">
+                  <div className="flex flex-row gap-2">
+                    <label htmlFor="recurrence" className="label mr-2">Repeats every:</label>
+                    <input type="number" name="repeatValue" className="input" placeholder="Number" onChange={handleMultiForm} />
+                    <select className="select" name="repeatType" onChange={handleMultiForm}>
+                      <option value="1">Day</option>
+                      <option value="2">Weeks</option>
+                      <option value="3">Month</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="recurrence" className="label">Ends on:</label>
+                    <label className="label">
+                      <input type="radio" name="endType" value="eoy" onChange={handleMultiForm} className="radio mr-2" defaultChecked />
+                      End of Year
+                    </label>
+                    <label className="label">
+                      <input type="radio" name="endType" value="date" onChange={handleMultiForm} className="radio mr-2" />
+                      <Datepicker id="recurrence" name="endDate" />
+                    </label>
+                  </div>
+                </div>
+              )}
               <button className="btn" onClick={handleMakeBooking}>Make Booking</button>
             </div>
           </div>

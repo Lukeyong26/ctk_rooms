@@ -75,7 +75,6 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
   };
 
   const renderTimeSlots = () => {
-    console.log("rendering")
     const timeSlots = [];
     for (let hour = 6; hour < 22; hour++) {
       const hourString = `${hour.toString().padStart(2, '0')}:00`;

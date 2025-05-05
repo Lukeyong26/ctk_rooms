@@ -5,12 +5,12 @@ export default function MainNavbar() {
 
   return (
     <div className="navbar bg-base-300 shadow-sm">
-      <div className="flex-1 flex-col">
-        <a href="/" className="btn btn-ghost text-xl">CTK Rooms</a>
+      <div className="flex-1 flex-col px-4">
+        <a href="/" className="btn btn-ghost text-xl">CTK Rooms</a> 
       </div>
       <div className="flex-none">
         {/* Desktop Menu */}
-        <ul className="hidden md:flex menu menu-horizontal px-1 text-xs md:text-lg">
+        <ul className="hidden md:flex menu menu-horizontal px-4 text-xs md:text-lg">
           <li><a href="/">Home</a></li>
           <li><a href="/rooms">Available Rooms</a></li>
           <li><a href="/help">Help</a></li>
