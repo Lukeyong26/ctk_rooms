@@ -14,7 +14,6 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
   const [pickEndTime, setPickEndTime] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("userffect", startTime)
     if (startTime && endTime) {
       validateTime(startTime, endTime);
     }

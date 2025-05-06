@@ -1,7 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
+import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc, getDoc, or } from "firebase/firestore";
 import { Bookings, Room } from "./types";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,9 +18,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
 export const getRoomsList = async () => {
   const roomsList: Room[] = [];
@@ -81,4 +79,33 @@ export const getBookingsByDateAndRoom = async (date: string, roomId: string) => 
 export const deleteBooking = async (id: string) => {
   const docRef = doc(db, 'roomBookings', id);
   await deleteDoc(docRef);
+}
+
+export const deleteBookingByQuery = async () => {
+  const collectionRef = collection(db, 'roomBookings');
+  // const q = query(collectionRef, or(where("date", "==", date), where("roomId", "==", roomId), where("startTime", "==", startTime), where("endTime", "==", endTime)));
+  const q = query(collectionRef, where("bookedBy", "==", "Luke"));
+  const snapshot = await getDocs(q);
+  snapshot.forEach((doc) => {
+      deleteBooking(doc.id);
+  });
+}
+
+export const newUser = async (uid: string, email: string) => {
+  const docRef = doc(db, 'users', uid);
+  const newUser = {
+    email: email,
+    role: 'user',
+  }
+  await setDoc(docRef, newUser);
+}
+
+export const getUserRole = async (uid: string) => {
+  const docRef = doc(db, 'users', uid);
+  const snapshot = await getDoc(docRef);
+  let role: string | null = null;
+  if (snapshot.exists()) {
+    role = snapshot.data().role;
+  }
+  return role;
 }

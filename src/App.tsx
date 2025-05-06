@@ -8,7 +8,9 @@ import BookRoom from './pages/BookRoom';
 import RoomBookings from './pages/RoomBookings';
 import SuccessfulBooking from './pages/SuccessfulBooking';
 import FreeRooms from './pages/FreeRooms';
-import Help from './pages/Help';
+import LoginPage from './pages/auth/Login';
+import Signup from './pages/auth/Signup';
+import Profile from './pages/Profile';
 
 const router = createBrowserRouter([
   {
@@ -30,8 +32,15 @@ const router = createBrowserRouter([
           {path: ':roomId', Component: RoomBookings}
         ]
       },
-      { path: 'help',
-        Component: Help
+      { path: 'profile',
+        Component: Profile
+      },
+      {
+        path: 'auth',
+        children: [
+          {path: 'login', Component: LoginPage},
+          {path: 'signup', Component: Signup},
+        ]
       }
     ]
   }

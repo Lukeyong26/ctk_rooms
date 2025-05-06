@@ -1,7 +1,25 @@
 import { useState } from "react";
+import { auth } from "../utils/firebase_auth";
+import { onAuthStateChanged, User } from "firebase/auth";
+import { getUserRole } from "../utils/firebase";
 
 export default function MainNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      setUser(user);
+      const userRole = await getUserRole(user.uid);
+      if (userRole === "admin") {
+        setIsAdmin(true);
+      }
+    } else {
+      setUser(null);
+      setIsAdmin(false);
+    }
+  });
 
   return (
     <div className="navbar bg-base-300 shadow-sm">
@@ -13,8 +31,12 @@ export default function MainNavbar() {
         <ul className="hidden md:flex menu menu-horizontal px-4 text-xs md:text-lg">
           <li><a href="/">Home</a></li>
           <li><a href="/rooms">Available Rooms</a></li>
-          <li><a href="/help">Help</a></li>
-          <li><a href="/admin">Admin</a></li>
+          {user ? (
+            <>
+              {isAdmin && <li><a href="/admin">Admin</a></li>}
+              <li><a href="profile">User</a></li>
+            </>
+          ) : (<li><a href="/auth/login">Login</a></li>)}
         </ul>
 
         {/* Mobile Menu Button */}

@@ -25,7 +25,7 @@ export default function Admin() {
   const [bookedBy, setBookedBy] = useState<string>('');
   const [multipleBookings, setMultipleBookings] = useState<boolean>(false);
   const [multiFormData, setmultiFormData] = useState<any>({
-    repeatValue: 0, repeatType: 'day', endType: 'eoy', endDate: ''
+    repeatValue: 0, repeatType: '1', endType: 'eoy', endDate: ''
   });
   
 
@@ -50,8 +50,6 @@ export default function Admin() {
 
   // For Deleting Booking
   useEffect(() => {
-    console.log("Selected Room: ", selectedRoom);
-    console.log("Selected Date: ", selectedDate);
     if (selectedRoom && selectedDate) {
       const fetchBookings = async () => {
         const bookings = await getBookingsByDateAndRoom(selectedDate, selectedRoom);
@@ -102,12 +100,22 @@ export default function Admin() {
         endDateObj.setMonth(11);
         endDateObj.setDate(31);
       } else {
-        endDateObj = new Date(endDate);
+        if (endDate === '') {
+          alert("Please select an end date");
+          return;
+        }
+        const endDateSplit = endDate.split('/');
+        const formattedEndDate = `${endDateSplit[2]}-${endDateSplit[1]}-${endDateSplit[0]}`;
+        endDateObj = new Date(formattedEndDate);
       }
 
-      console.log("Date: " + dateObj + " End Date: " + endDateObj);
+
+      let x = 0;
 
       while (dateObj <= endDateObj) {
+        if (x > 30) {
+          break;
+        }
         const booking = {
           date: dateObj.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }),
           roomId: roomId,
@@ -124,9 +132,10 @@ export default function Admin() {
         } else if (repeatType === 3) {
           dateObj.setMonth(dateObj.getMonth() + repeatValue);
         }
+        x++;
       }
       alert("Multi Booking made successfully");
-      // nav('/admin');
+      nav('/admin');
       return;
     }
 
@@ -232,7 +241,8 @@ export default function Admin() {
                     </label>
                     <label className="label">
                       <input type="radio" name="endType" value="date" onChange={handleMultiForm} className="radio mr-2" />
-                      <Datepicker id="recurrence" name="endDate" />
+                      {/* <Datepicker id="recurrence" name="endDate" /> */}
+                      <input type="date" name="endDate" className="input" onChange={handleMultiForm} />
                     </label>
                   </div>
                 </div>

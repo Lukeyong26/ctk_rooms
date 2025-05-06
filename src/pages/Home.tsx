@@ -1,48 +1,84 @@
 import { useEffect, useState } from "react";
 import RoomCard from "../components/RoomCard";
-import { getBookingsByDate, getRoomsList,  } from "../utils/firebase";
+import { getBookingsByDate, getBookingsByDateAndRoom, getRoomsList,  } from "../utils/firebase";
 import { Bookings, Room } from "../utils/types";
-import { Datepicker } from "flowbite-react";
 
 export default function Home() {
 
   const todaysDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
   const [allRooms, setAllRooms] = useState<Room[]>([]);
+  const [DisplayedRooms, setDisplayedRooms] = useState<Room[]>([]);
   const [todaysBookings, setTodaysBookings] = useState<Bookings[]>([]);
   const [selectedDate, setSelectedDate] = useState(todaysDate);
+  const [selectedRoom, setSelectedRoom] = useState("all-rooms");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     const fetchData = async () => {
       const rooms = await getRoomsList();
-      const bookings = await getBookingsByDate(selectedDate);
-      console.log(bookings);
       setAllRooms(rooms);
-      setTodaysBookings(bookings);
+
+      if (selectedRoom !== "all-rooms") {
+        const bookings = await getBookingsByDateAndRoom(selectedDate, selectedRoom);
+        const filteredRooms = rooms.filter((room) => room.id === selectedRoom);
+        setDisplayedRooms(filteredRooms);
+        setTodaysBookings(bookings);
+        setLoading(false);
+      } else {
+        const bookings = await getBookingsByDate(selectedDate);
+        setDisplayedRooms(rooms);
+        setTodaysBookings(bookings);
+        setLoading(false);
+      }
     };
 
     fetchData();
-  }, [selectedDate]);
+    
+  }, [selectedDate, selectedRoom]);
 
   return (
-    <div>
-      <p>Select Date:</p>
-      <Datepicker onChange={(e)=>{
-        if (e) {
-          const date = new Date(e).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
-          setSelectedDate(date);
-        }
-      }}/>
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 w-full mt-10">
-        
-        {allRooms.map((room) => {
+    <div className="h-full w-full">
+      <div className="flex justify-center gap-2 w-full">
+        <label className="input w-full">
+          <span className="label">Select Date:</span>
+          <input onChange={(e)=>{
+            if (e) {
+              const date = new Date(e.target.value).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+              setSelectedDate(date);
+            }
+          }} type="date" />
+        </label>
+
+        <label className="select w-full">
+          <span className="label">Room:</span>
+          <select onChange={(e) => {
+            setSelectedRoom(e.target.value);
+          }} className="select w-full">
+            <option value="all-rooms">All Rooms</option>
+            {allRooms.map((room) => (
+              <option key={room.id} value={room.id}>{room.name}</option>
+            ))}
+          </select>
+        </label>
+      </div>
+      
+      {!loading ? (
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full mt-10">
+        {DisplayedRooms.map((room) => {
           const roomBookings = todaysBookings.filter((booking) => booking.roomId === room.id);
 
           return (
-            <RoomCard key={room.id} imageUrl={"https://thumbs.dreamstime.com/b/office-room-7881663.jpg"} id={room.id} title={room.name} desc={room.desc} bookings={roomBookings} />
+            <RoomCard key={room.id} imageUrl={"https://hosanna.com.sg/wp-content/uploads/2023/06/2022-08-02-1024x768.jpg"} id={room.id} title={room.name} desc={room.desc} bookings={roomBookings} />
           )
         })}
       </div>
+      ) : (
+        <div className="flex justify-center items-center h-full">
+          <span className="loading loading-ring loading-xl text-gray-800"></span>
+        </div>
+      )}
     </div>
   );
 }

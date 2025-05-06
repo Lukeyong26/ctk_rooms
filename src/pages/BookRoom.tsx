@@ -82,7 +82,15 @@ export default function BookRoom() {
       <div className="flex w-full max-w-md flex-col gap-4">
         <p>Making a booking for: </p>
         <p className="font-semibold text-4xl mb-2">{room?.name}</p>
-        <Datepicker id="date" name="date" required onChange={(e) => setDate(e?.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '')} />
+
+        <label className="input w-full">
+          <span className="label">Select Date:</span>
+          <input onChange={(e) => {
+            const date = new Date(e.target.value).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            setDate(date);
+          }} type="date"/>
+        </label>
+        {/* <Datepicker id="date" name="date" required onChange={(e) => setDate(e?.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }) || '')} /> */}
         
         {/* <TextInput type="text" name="startTime" placeholder="Start Time" required />
         <TextInput type="text" name="endTime" placeholder="End Time" required /> */}
