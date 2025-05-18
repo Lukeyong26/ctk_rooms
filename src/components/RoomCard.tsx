@@ -16,7 +16,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ id, imageUrl, title, desc, bookings
   // const todaysDate = new Date().toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
 
   return (
-    <div className='relative bg-base-300 h-80 w-full dark:bg-gray-900 rounded-lg shadow-lg shadow-gray-400'>
+    <div className='relative bg-base-300 h-80 w-full dark:bg-gray-900 rounded-lg shadow-lg shadow-gray-400 dark:shadow-gray-950'>
       <div className='relative h-6/8 w-full'>
         <div className='absolute z-1 flex flex-col w-full h-full'>
           <div className='p-4 text-[#F1F0E8] w-2/3'>

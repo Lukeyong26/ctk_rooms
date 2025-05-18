@@ -65,7 +65,7 @@ export default function Home() {
       </div>
       
       {!loading ? (
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 w-full mt-10">
+      <div className="grid grid-cols-1 gap-6 w-full mt-10">
         {DisplayedRooms.map((room) => {
           const roomBookings = todaysBookings.filter((booking) => booking.roomId === room.id);
 
@@ -76,7 +76,7 @@ export default function Home() {
       </div>
       ) : (
         <div className="flex justify-center items-center h-full">
-          <span className="loading loading-ring loading-xl text-gray-800"></span>
+          <span className="loading loading-spinner loading-xl text-gray-800 dark:text-white"></span>
         </div>
       )}
     </div>

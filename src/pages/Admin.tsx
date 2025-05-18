@@ -109,13 +109,7 @@ export default function Admin() {
         endDateObj = new Date(formattedEndDate);
       }
 
-
-      let x = 0;
-
       while (dateObj <= endDateObj) {
-        if (x > 30) {
-          break;
-        }
         const booking = {
           date: dateObj.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }),
           roomId: roomId,
@@ -132,10 +126,9 @@ export default function Admin() {
         } else if (repeatType === 3) {
           dateObj.setMonth(dateObj.getMonth() + repeatValue);
         }
-        x++;
       }
       alert("Multi Booking made successfully");
-      nav('/admin');
+      
       return;
     }
 

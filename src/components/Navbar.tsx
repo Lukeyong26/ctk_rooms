@@ -22,7 +22,7 @@ export default function MainNavbar() {
   });
 
   return (
-    <div className="navbar bg-base-300 shadow-sm">
+    <div className="w-full navbar bg-base-300 shadow-sm">
       <div className="flex-1 flex-col px-4">
         <a href="/" className="btn btn-ghost text-xl">CTK Rooms</a> 
       </div>

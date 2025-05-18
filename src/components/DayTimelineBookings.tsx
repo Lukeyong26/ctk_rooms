@@ -23,7 +23,7 @@ const randomColor = [
   'bg-[#F4CCCC]','bg-[#CFE2F3]','bg-[#EAD1DC]','bg-[#B6D7A8]','bg-[#C9DAF8]',
 ]
 
-const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
+const DayTimelineBookings: React.FC<DayTimelineProps> = ({ bookings }) => {
   const renderTimeline = () => {
     const timelineElements = [];
     for (let hour = 6; hour <= 22; hour++) {
@@ -50,16 +50,12 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
       const colSpanClass = cssColSpanlist[hours - 1];
 
       bookingElements.push(
-        <div key={index} className={`row-start-1 w-full h-5  ${colStartClass} ${colSpanClass}` }>
-          <div className="tooltip h-full w-full">
-            <div className={`tooltip-content ${randomColor[randomNumber]}`}>
-              <div className='text-sm md:text-lg text-black'>
-                <div>Booked By: {booking.bookedBy}</div>
-                <div>From: {booking.startTime} - {booking.endTime}</div>
-              </div>
+        <div key={index} className={`row-start-1 w-full h-6 ${colStartClass} ${colSpanClass}` }>
+            <div className={`flex h-full w-full ${randomColor[randomNumber]} items-center justify-center rounded-lg border-1 border-gray-400`}>
+                <div className='text-xs md:text-sm text-black font-semibold'>
+                    <div>{booking.bookedBy}</div>
+                </div>
             </div>
-            <div className={`h-full w-full ${randomColor[randomNumber]} rounded-lg border-1 border-gray-400`}/>
-          </div>
         </div>
       );
     });
@@ -69,7 +65,7 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
   
   return (
       <div className="flex w-full mt-2">
-        <div className='grid grid-rows-2 grid-flow-row-dense w-full'>
+        <div className='grid grid-rows-2 grid-flow-row-dense w-full items-center'>
           {renderBookings()}
           {renderTimeline()}
         </div>
@@ -77,4 +73,4 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
   );
 };
 
-export default DayTimeline;
+export default DayTimelineBookings;

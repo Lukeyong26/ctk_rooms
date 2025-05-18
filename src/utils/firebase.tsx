@@ -54,6 +54,18 @@ export const getBookingsByDate = async (date : string) => {
   return bookingsList;
 }
 
+export const getBookingsByDateRange = async (startDate: string, endDate: string) => {
+  const bookingsList: Bookings[] = [];
+
+  const collectionRef = collection(db, 'roomBookings');
+  const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate));
+  const snapshot = await getDocs(q);
+  snapshot.forEach((doc) => {
+      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime});
+  });
+  return bookingsList;
+}
+
 export const addRoom = async (room: Room) => {
   const docRef = doc(db, 'roomsList', room.id);
   await setDoc(docRef, room);
