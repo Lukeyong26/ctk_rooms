@@ -5,7 +5,7 @@ import { Bookings, Room } from "../utils/types";
 
 export default function Home() {
 
-  const todaysDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  const todaysDate = new Date().toISOString().split('T')[0];
 
   const [allRooms, setAllRooms] = useState<Room[]>([]);
   const [DisplayedRooms, setDisplayedRooms] = useState<Room[]>([]);
@@ -28,6 +28,7 @@ export default function Home() {
         setLoading(false);
       } else {
         const bookings = await getBookingsByDate(selectedDate);
+        console.log("Bookings for date:", selectedDate, bookings);
         setDisplayedRooms(rooms);
         setTodaysBookings(bookings);
         setLoading(false);
@@ -45,7 +46,7 @@ export default function Home() {
           <span className="label">Select Date:</span>
           <input onChange={(e)=>{
             if (e) {
-              const date = new Date(e.target.value).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+              const date = new Date(e.target.value).toISOString().split('T')[0];
               setSelectedDate(date);
             }
           }} type="date" />

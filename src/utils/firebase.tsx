@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc, getDoc, or } from "firebase/firestore";
-import { Bookings, Room } from "./types";
+import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc, getDoc, Timestamp } from "firebase/firestore";
+import { BookingFormData, Bookings, Room } from "./types";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -20,6 +20,12 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// ROOMS FUNCTIONS
+export const addRoom = async (room: Room) => {
+  const docRef = doc(db, 'roomsList', room.id);
+  await setDoc(docRef, room);
+}
 
 export const getRoomsList = async () => {
   const roomsList: Room[] = [];
@@ -42,6 +48,28 @@ export const getRoomById = async (roomId: string) => {
   return room;
 }
 
+// MINISTRY FUNCTIONS
+export const addMinistry = async (ministry: {id: string, name: string; color: string; }) => {
+  const docRef = doc(db, 'ministries', ministry.id);
+  await setDoc(docRef, ministry);
+}
+
+export const getMinistries = async () => {
+  const ministriesList: {id: string, name: string; color: string; }[] = [];
+  const collectionRef = collection(db, 'ministries');
+  const snapshot = await getDocs(collectionRef);
+  snapshot.forEach((doc) => {
+      ministriesList.push({id: doc.id, name: doc.data().name, color: doc.data().color});
+  });
+  return ministriesList;
+}
+
+// BOOKING FUNCTIONS
+export const addBooking = async (booking: BookingFormData) => {
+  const colRef = collection(db, 'roomBookings');
+  await addDoc(colRef, booking);
+}
+
 export const getBookingsByDate = async (date : string) => {
   const bookingsList: Bookings[] = [];
 
@@ -49,7 +77,11 @@ export const getBookingsByDate = async (date : string) => {
   const q = query(collectionRef, where("date", "==", date));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
-      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime});
+      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
+        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
+        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
+        description: doc.data().description
+      });
   });
   return bookingsList;
 }
@@ -61,19 +93,27 @@ export const getBookingsByDateRange = async (startDate: string, endDate: string)
   const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
-      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime});
+      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
+        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
+        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
+        description: doc.data().description});
   });
   return bookingsList;
 }
 
-export const addRoom = async (room: Room) => {
-  const docRef = doc(db, 'roomsList', room.id);
-  await setDoc(docRef, room);
-}
+export const getBookingsByDateRangeAndRoom = async (startDate: string, endDate: string, roomId: string) => {
+  const bookingsList: Bookings[] = [];
 
-export const addBooking = async (booking: { date: string; roomId: string; bookedBy: string; startTime: string; endTime: string; }) => {
-  const colRef = collection(db, 'roomBookings');
-  await addDoc(colRef, booking);
+  const collectionRef = collection(db, 'roomBookings');
+  const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate), where("roomId", "==", roomId));
+  const snapshot = await getDocs(q);
+  snapshot.forEach((doc) => {
+      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
+        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
+        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
+        description: doc.data().description});
+  });
+  return bookingsList;
 }
 
 export const getBookingsByDateAndRoom = async (date: string, roomId: string) => {
@@ -83,11 +123,15 @@ export const getBookingsByDateAndRoom = async (date: string, roomId: string) => 
   const q = query(collectionRef, where("date", "==", date), where("roomId", "==", roomId));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
-      bookingsList.push({id: doc.id , date: doc.data().date, roomId: doc.data().roomId, bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime});
+      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
+        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
+        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
+        description: doc.data().description});
   });
   return bookingsList;
 }
 
+// DELETE BOOKING
 export const deleteBooking = async (id: string) => {
   const docRef = doc(db, 'roomBookings', id);
   await deleteDoc(docRef);
@@ -96,13 +140,20 @@ export const deleteBooking = async (id: string) => {
 export const deleteBookingByQuery = async () => {
   const collectionRef = collection(db, 'roomBookings');
   // const q = query(collectionRef, or(where("date", "==", date), where("roomId", "==", roomId), where("startTime", "==", startTime), where("endTime", "==", endTime)));
-  const q = query(collectionRef, where("bookedBy", "==", "Luke"));
+  const q = query(collectionRef, where("date", "<=", "2025-06-04"));
   const snapshot = await getDocs(q);
+  if (snapshot.empty) {
+    console.log("No matching documents.");
+    return;
+  } else {
+    console.log("Found matching documents:", snapshot.size);
+  }
   snapshot.forEach((doc) => {
       deleteBooking(doc.id);
   });
 }
 
+// AUTH
 export const newUser = async (uid: string, email: string) => {
   const docRef = doc(db, 'users', uid);
   const newUser = {

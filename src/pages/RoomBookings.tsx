@@ -1,13 +1,13 @@
 import { useParams } from "react-router"
-import { getBookingsByDateRange, getRoomById } from "../utils/firebase";
+import { getBookingsByDateRange, getBookingsByDateRangeAndRoom, getRoomById } from "../utils/firebase";
 import { useEffect, useState } from "react";
 import { Room } from "../utils/types";
 import DayTimelineBookings from "../components/DayTimelineBookings";
     
 export default function RoomBookings() {
 
-  const todayDate = new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
-  const todayDatePlusSeven = new Date(new Date().setDate(new Date().getDate() + 7)).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+  const todayDate = new Date().toISOString().split('T')[0];
+  const todayDatePlusSeven = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0];
 
   const { roomId } = useParams();
   const [room, setRoom] = useState<Room | null>(null);
@@ -31,27 +31,23 @@ export default function RoomBookings() {
 
   const fetchBookings = async () => {
     if (startDate && endDate && roomId) {
-      const bookings = await getBookingsByDateRange(startDate, endDate);
+      const bookings = await getBookingsByDateRangeAndRoom(startDate, endDate, roomId);
+      console.log("Bookings fetched:", bookings);
       setBookings(bookings);
     }
   }
 
   const renderBookings = () => {
     if (!startDate || !endDate) return null;
-    const startDatString = startDate.split('/');
-    const formattedStartDate = `${startDatString[2]}-${startDatString[1]}-${startDatString[0]}`;
-    let startDateObj = new Date(formattedStartDate);
-    const endDatString = endDate.split('/');
-    const formattedEndDate = `${endDatString[2]}-${endDatString[1]}-${endDatString[0]}`;
-    let endDateObj = new Date(formattedEndDate);
+    let startDateObj = new Date(startDate);
+    let endDateObj = new Date(endDate);
 
     let booksRender = [];
 
     while (startDateObj <= endDateObj) {
-      const roomBookings = bookings.filter(booking => booking.roomId === roomId);
       const formattedDate = startDateObj.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
       const formattedDay = startDateObj.toLocaleDateString('en-GB', { weekday: 'long' });
-      const bookingsForDate = roomBookings.filter(booking => booking.date === formattedDate);
+      const bookingsForDate = bookings.filter(booking => booking.date === startDateObj.toISOString().split('T')[0]);
       
       booksRender.push(
         <div key={formattedDate} className="relative flex flex-col w-full h-27 bg-base-100 gap-2 p-2 rounded-lg">
@@ -84,7 +80,7 @@ export default function RoomBookings() {
                 <span className="label">From:</span>
                 <input onChange={(e)=>{
                   if (e) {
-                    const date = new Date(e.target.value).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                    const date = new Date(e.target.value).toISOString().split('T')[0];
                     setStartDate(date);
                   }
                 }} type="date"/>
@@ -93,7 +89,7 @@ export default function RoomBookings() {
                 <span className="label">To:</span>
                 <input onChange={(e)=>{
                   if (e) {
-                    const date = new Date(e.target.value).toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
+                    const date = new Date(e.target.value).toISOString().split('T')[0];
                     setEndDate(date);
                   }
                 }} type="date" />

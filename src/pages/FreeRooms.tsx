@@ -20,7 +20,7 @@ export default function FreeRooms() {
         const fetchRooms = async () => {
             setLoading(true);
             try {
-                const data : Bookings[] = await getBookingsByDate(new Date().toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' }));
+                const data : Bookings[] = await getBookingsByDate(new Date().toISOString().split('T')[0]);
                 const allRooms : Room[] = await getRoomsList();
 
                 const bookedRoomIds = data.filter(booking => {
