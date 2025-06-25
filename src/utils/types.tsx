@@ -9,6 +9,7 @@ export interface Bookings {
     phoneNumber: string;
     email: string;
     description: string;
+    pending: boolean;
 }
 
 export interface BookingFormData {
@@ -21,6 +22,7 @@ export interface BookingFormData {
     phoneNumber: string;
     email: string;
     description: string;
+    pending: boolean;
 }
 
 export interface Ministry {

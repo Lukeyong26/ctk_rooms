@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { Room } from "../utils/types";
 import { getRoomById } from "../utils/firebase";
-import RoomBookingForm from "../components/RoomBookingForm";
+import RoomBookingForm from "../components/booking/RoomBookingForm";
 
 export default function BookRoom() {
   

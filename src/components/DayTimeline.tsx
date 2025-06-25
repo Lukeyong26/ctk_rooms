@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bookings } from '../utils/types';
 import { JSX } from 'react/jsx-runtime';
+import { getMinistries } from '../utils/firebase';
 
 interface DayTimelineProps {
   bookings: Bookings[];
@@ -17,13 +18,18 @@ const cssColSpanlist = [
   'col-span-9','col-span-10','col-span-11','col-span-12','col-span-13','col-span-14','col-span-15','col-span-16',
 ];
 
-const randomColor = [
-  'bg-[#B3C8CF]','bg-[#D1E7DD]','bg-[#F8D7DA]','bg-[#FFF3CD]','bg-[#CFE2FF]',
-  'bg-[#F9F9F9]','bg-[#D9EAD3]','bg-[#EAD1DC]','bg-[#D0E0E3]','bg-[#FFE6CC]',
-  'bg-[#F4CCCC]','bg-[#CFE2F3]','bg-[#EAD1DC]','bg-[#B6D7A8]','bg-[#C9DAF8]',
-]
-
 const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
+
+  const [ministries, setMinistries] = React.useState<any[]>([]);
+  
+  useEffect(() => {
+    const fetchMinistries = async () => {
+      const ministriesList = await getMinistries();
+      setMinistries(ministriesList || []);
+    };
+    fetchMinistries();
+  }, []);
+
   const renderTimeline = () => {
     const timelineElements = [];
     for (let hour = 6; hour <= 22; hour++) {
@@ -44,7 +50,9 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
       const startHour = parseInt(booking.startTime.split(':')[0], 10);
       const hours = parseInt(booking.endTime.split(':')[0], 10) - startHour;
 
-      const randomNumber = Math.floor(Math.random() * randomColor.length);
+      const ministry = ministries.find((m) => m.id === booking.ministry);
+      const color = ministry?.color || '#ffffff';
+      const minName = ministry?.name || 'Unknown';
 
       const colStartClass = cssColStartlist[startHour - 6];
       const colSpanClass = cssColSpanlist[hours - 1];
@@ -52,13 +60,13 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
       bookingElements.push(
         <div key={index} className={`row-start-1 w-full h-5  ${colStartClass} ${colSpanClass}` }>
           <div className="tooltip h-full w-full">
-            <div className={`tooltip-content ${randomColor[randomNumber]}`}>
-              <div className='text-sm md:text-lg text-black'>
-                <div>Booked By: {booking.bookedBy}</div>
+            <div className={`tooltip-content`} style={{backgroundColor:color}}>
+              <div className='text-sm md:text-lg text-gray-800'>
+                <div>Booked By: {minName}</div>
                 <div>From: {booking.startTime} - {booking.endTime}</div>
               </div>
             </div>
-            <div className={`h-full w-full ${randomColor[randomNumber]} rounded-lg border-1 border-gray-400`}/>
+            <div className={`h-full w-full rounded-lg border-1 border-gray-400`} style={{backgroundColor: color}}/>
           </div>
         </div>
       );

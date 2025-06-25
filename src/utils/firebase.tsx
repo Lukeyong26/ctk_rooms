@@ -1,9 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc, getDoc, Timestamp } from "firebase/firestore";
+import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc, getDoc, QueryDocumentSnapshot, updateDoc } from "firebase/firestore";
 import { BookingFormData, Bookings, Room } from "./types";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -80,56 +78,84 @@ export const getBookingsByDate = async (date : string) => {
       bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
         bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
         ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
-        description: doc.data().description
+        description: doc.data().description, pending: doc.data().pending || false
       });
   });
   return bookingsList;
 }
 
 export const getBookingsByDateRange = async (startDate: string, endDate: string) => {
-  const bookingsList: Bookings[] = [];
+  let bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
   const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
-      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
-        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
-        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
-        description: doc.data().description});
+    bookingsList = bookingsList.concat(addBookingToList(doc));
   });
   return bookingsList;
 }
 
 export const getBookingsByDateRangeAndRoom = async (startDate: string, endDate: string, roomId: string) => {
-  const bookingsList: Bookings[] = [];
+  let bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
   const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate), where("roomId", "==", roomId));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
-      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
-        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
-        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
-        description: doc.data().description});
+    bookingsList = bookingsList.concat(addBookingToList(doc));
   });
   return bookingsList;
 }
 
 export const getBookingsByDateAndRoom = async (date: string, roomId: string) => {
-  const bookingsList: Bookings[] = [];
+  let bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
   const q = query(collectionRef, where("date", "==", date), where("roomId", "==", roomId));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
-      bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
-        bookedBy: doc.data().bookedBy, startTime: doc.data().startTime, endTime: doc.data().endTime,
-        ministry: doc.data().ministry, phoneNumber: doc.data().phoneNumber, email: doc.data().email, 
-        description: doc.data().description});
+    bookingsList = bookingsList.concat(addBookingToList(doc));
   });
   return bookingsList;
 }
+
+export const getPendingBookings = async () => {
+  let bookingsList: Bookings[] = [];
+
+  const collectionRef = collection(db, 'roomBookings');
+  const q = query(collectionRef, where("pending", "==", true));
+  const snapshot = await getDocs(q);
+  snapshot.forEach((doc) => {
+    bookingsList = bookingsList.concat(addBookingToList(doc));
+  });
+  return bookingsList;
+}
+
+export const approveBooking = async (bookingId: string) => {
+  const bookingRef = doc(db, 'roomBookings', bookingId);
+  await updateDoc(bookingRef, {pending: false});
+}
+
+const addBookingToList = (doc: QueryDocumentSnapshot): Bookings[] => {
+  const bookingList: Bookings[] = [];
+  bookingList.push({
+    id: doc.id,
+    date: doc.data().date,
+    roomId: doc.data().roomId,
+    bookedBy: doc.data().bookedBy,
+    startTime: doc.data().startTime,
+    endTime: doc.data().endTime,
+    ministry: doc.data().ministry,
+    phoneNumber: doc.data().phoneNumber,
+    email: doc.data().email,
+    description: doc.data().description,
+    pending: doc.data().pending || true
+  });
+  return bookingList;
+}
+
+
 
 // DELETE BOOKING
 export const deleteBooking = async (id: string) => {
@@ -140,7 +166,7 @@ export const deleteBooking = async (id: string) => {
 export const deleteBookingByQuery = async () => {
   const collectionRef = collection(db, 'roomBookings');
   // const q = query(collectionRef, or(where("date", "==", date), where("roomId", "==", roomId), where("startTime", "==", startTime), where("endTime", "==", endTime)));
-  const q = query(collectionRef, where("date", "<=", "2025-06-04"));
+  const q = query(collectionRef, where("roomId", "==", "main-church"));
   const snapshot = await getDocs(q);
   if (snapshot.empty) {
     console.log("No matching documents.");

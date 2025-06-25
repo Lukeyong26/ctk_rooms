@@ -1,25 +1,29 @@
 import { useEffect, useState } from "react";
 import TimePicker from "./TimePicker";
 import { Select, TextInput } from "flowbite-react";
-import { addBooking, getBookingsByDateAndRoom, getMinistries } from "../utils/firebase";
+import { addBooking, getBookingsByDateAndRoom, getMinistries } from "../../utils/firebase";
 import { useNavigate } from "react-router";
-import { BookingFormData, Bookings, Room } from "../utils/types";
+import { BookingFormData, Room } from "../../utils/types";
+import { format } from "date-fns";
 
-function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean, roomsList?: Room[], roomID?: string }) {
+function RoomBookingForm({ multiForm, roomsList, roomID, date }: 
+  { multiForm?: boolean, roomsList?: Room[], roomID?: string, date?: string }
+) {
   
   const nav = useNavigate();
-
-  const todaysDate = new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD for input type="date"
-  console.log("Today's Date:", todaysDate);
+  const todaysDate = date? date : format(new Date(), 'yyyy-MM-dd'); // Format YYYY-MM-DD for input type="date"
   const [ministries, setMinistries] = useState<any[]>([]);
   const [bookings, setBookings] = useState<any[]>([]);
+  const [multipleBookings, setMultipleBookings] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const [mainFormData, setMainFormData] = useState<BookingFormData>({
     date: todaysDate, roomId: roomID? roomID : '', bookedBy: '', startTime: '', endTime: '', 
-    ministry: '', phoneNumber: '', email: '', description: ''
+    ministry: '', phoneNumber: '', email: '', description: '', pending: true
   });
-  const [multipleBookings, setMultipleBookings] = useState<boolean>(false);
+
   const [multiFormData, setmultiFormData] = useState<any>({
-    repeatValue: 0, repeatType: '1', endType: 'eoy', endDate: ''
+    repeatValue: 1, repeatType: '1', endType: 'eoy', endDate: todaysDate
   });
 
   useEffect(() => {
@@ -40,14 +44,28 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
     fetchBookings();
   }, [mainFormData.roomId, mainFormData.date]);
 
+  const resetForms = () => {
+    setMainFormData({
+      date: todaysDate, roomId: roomID? roomID : '', bookedBy: '', startTime: '', endTime: '', 
+      ministry: '', phoneNumber: '', email: '', description: '', pending: true
+    });
+    setmultiFormData({
+      repeatValue: 1, repeatType: '1', endType: 'eoy', endDate: todaysDate
+    });
+    setMultipleBookings(false);
+  }
+
   const handleMakeBooking = async (e : any) => {
     e.preventDefault();
+    setLoading(true);
     if (mainFormData.roomId === undefined) {
+      setLoading(false);
       return;
     }
-    console.log("state:", mainFormData);
+
     if (mainFormData.date === '' || mainFormData.startTime === '' || mainFormData.endTime === '' || mainFormData.bookedBy === '' || mainFormData.roomId === '') {
       alert("Please fill all the fields");
+      setLoading(false);
       return;
     }
 
@@ -60,10 +78,14 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
       if (isRoomBooked) {
         alert("OPPS! Sorry the Room was just booked. Please choose another time.");
         setMainFormData((prevState: any) => ({...prevState, startTime: '', endTime: ''}));
+        setLoading(false);
         return;
       }
 
       await addBooking(mainFormData);
+      resetForms();
+      setLoading(false);
+      
       nav('/bookings/success');
 
     } else {
@@ -73,6 +95,7 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
         multiFormData.repeatValue === '' || multiFormData.repeatType === '' || (multiFormData.endDate === '' && multiFormData.endType !== 'eoy')
       ) {
         alert("Please fill all the fields");
+        setLoading(false);
         return;
       }
       const repeatValue = parseInt(multiFormData.repeatValue);
@@ -86,9 +109,12 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
         endDateObj.setDate(31);
       }
 
+      console.log("Start Date: ", dateObj);
+      console.log("End Date: ", endDateObj);
+
       while (dateObj <= endDateObj) {
         const booking = {
-          date: dateObj.toISOString().split('T')[0],
+          date: format(new Date(dateObj), 'yyyy-MM-dd'),
           roomId: mainFormData.roomId,
           bookedBy: mainFormData.bookedBy,
           startTime: mainFormData.startTime,
@@ -96,7 +122,8 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
           ministry: mainFormData.ministry,
           phoneNumber: mainFormData.phoneNumber,
           email: mainFormData.email,
-          description: mainFormData.description
+          description: mainFormData.description,
+          pending: mainFormData.pending
         }
         await addBooking(booking);
         console.log("Booking made for: ", booking);
@@ -108,50 +135,45 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
           dateObj.setMonth(dateObj.getMonth() + repeatValue);
         }
       }
-      alert("Multi Booking made successfully");
+      resetForms();
+      setLoading(false);
+      
+      nav('/bookings/success');
     }
   }
 
   const handleMainForm = (e: any) => {
     const { name, value } = e.target;
-    if (name === 'date') {
-      const dateValue = new Date(value);
-      const formattedDate = dateValue.toISOString().split('T')[0];
-      console.log("Formatted Date:", formattedDate);
-      setMainFormData((prevState: any) => ({
-        ...prevState,
-        [name]: formattedDate
-      }));
-      return;
+    let data = null;
+    if (name === 'endDate') {
+      data = format(new Date(value), 'yyyy-MM-dd');
+    } else {
+      data = value;
     }
-    console.log("Main Form Data:", mainFormData);
     setMainFormData((prevState: any) => ({
       ...prevState,
-      [name]: value
+      [name]: data
     }));
   }
 
   const handleMultiForm = (e: any) => {
     const { name, value } = e.target;
+    let data = null;
     if (name === 'endDate') {
-      const dateValue = new Date(value);
-      const formattedDate = dateValue.toISOString().split('T')[0];
-      setmultiFormData((prevState: any) => ({
-        ...prevState,
-        [name]: formattedDate
-      }));
-      return;
+      data = format(new Date(value), 'yyyy-MM-dd');
+    } else {
+      data = value;
     }
     setmultiFormData((prevState: any) => ({
       ...prevState,
-      [name]: value
+      [name]: data
     }));
   }
   
   return (
     <div className="flex w-full">
-      <div className="flex w-full max-w-md flex-col gap-4">
-        {multiForm && (
+      <div className="flex w-full flex-col gap-4">
+        {roomsList && (
           <Select onChange={handleMainForm} id="roomId" name="roomId">
             <option value="">Select a Room</option>
             {roomsList?.map((room) => (
@@ -190,7 +212,7 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
           <div className="flex flex-col gap-2">
             <div className="flex flex-row gap-2">
               <label htmlFor="recurrence" className="label mr-2">Repeats every:</label>
-              <input type="number" name="repeatValue" className="input" placeholder="Number" onChange={handleMultiForm} />
+              <input type="number" value={multiFormData.repeatValue} name="repeatValue" className="input" placeholder="Number" onChange={handleMultiForm} />
               <select className="select" name="repeatType" onChange={handleMultiForm}>
                 <option value="1">Day</option>
                 <option value="2">Weeks</option>
@@ -211,7 +233,10 @@ function RoomBookingForm({ multiForm, roomsList, roomID }: { multiForm?: boolean
             </div>
           </div>
         )}
-        <button className="btn" onClick={handleMakeBooking}>Make Booking</button>
+        <button className="btn" onClick={handleMakeBooking}>
+          {loading ? (<span className="loading loading-spinner"></span>) : (null)}
+          Make Booking
+        </button>
       </div>
     </div>
   )

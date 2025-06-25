@@ -3,7 +3,14 @@
 @source "../.flowbite-react/class-list.json";
 @plugin "daisyui";
 
-
+@theme {
+    --color-main: #5aa9e6;
+    --color-mainLight: #7fc8f8;
+    --color-mainDark: #3a7bbf;
+    --color-sub: #f9f9f9;
+    --color-accentOne: #ffe45e;
+    --color-accenttwo: #ff6392;
+}
 
 
 /* ["0B0604","3E2514","A1282D","E4AD57","ADA5A2","D2C7B1"]) */

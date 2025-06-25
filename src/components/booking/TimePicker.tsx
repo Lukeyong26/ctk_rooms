@@ -1,5 +1,5 @@
-import React, { use, useEffect, useState } from 'react';
-import { Bookings } from '../utils/types';
+import React, { useEffect, useState } from 'react';
+import { Bookings } from '../../utils/types';
 
 interface TimePrickerProps {
   bookings: Bookings[],

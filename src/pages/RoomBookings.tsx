@@ -1,18 +1,19 @@
 import { useParams } from "react-router"
-import { getBookingsByDateRange, getBookingsByDateRangeAndRoom, getRoomById } from "../utils/firebase";
+import { getBookingsByDateRangeAndRoom, getRoomById } from "../utils/firebase";
 import { useEffect, useState } from "react";
 import { Room } from "../utils/types";
 import DayTimelineBookings from "../components/DayTimelineBookings";
+import { format, addDays } from "date-fns";
     
 export default function RoomBookings() {
 
-  const todayDate = new Date().toISOString().split('T')[0];
-  const todayDatePlusSeven = new Date(new Date().setDate(new Date().getDate() + 7)).toISOString().split('T')[0];
+  const todayDate = format(new Date(), 'yyyy-MM-dd');
+  const todayDatePlusSeven = format(addDays(new Date(), 7), 'yyyy-MM-dd');
 
   const { roomId } = useParams();
   const [room, setRoom] = useState<Room | null>(null);
-  const [startDate, setStartDate] = useState<string | null>(todayDate);
-  const [endDate, setEndDate] = useState<string | null>(todayDatePlusSeven);
+  const [startDate, setStartDate] = useState<string>(todayDate);
+  const [endDate, setEndDate] = useState<string>(todayDatePlusSeven);
   const [bookings, setBookings] = useState<any[]>([]);
 
   useEffect(() => {
@@ -47,10 +48,10 @@ export default function RoomBookings() {
     while (startDateObj <= endDateObj) {
       const formattedDate = startDateObj.toLocaleDateString('en-GB', { year: 'numeric', month: '2-digit', day: '2-digit' });
       const formattedDay = startDateObj.toLocaleDateString('en-GB', { weekday: 'long' });
-      const bookingsForDate = bookings.filter(booking => booking.date === startDateObj.toISOString().split('T')[0]);
+      const bookingsForDate = bookings.filter(booking => booking.date === format(new Date(startDateObj), 'yyyy-MM-dd'));
       
       booksRender.push(
-        <div key={formattedDate} className="relative flex flex-col w-full h-27 bg-base-100 gap-2 p-2 rounded-lg">
+        <div key={formattedDate} className="relative flex flex-col w-full h-40 bg-base-100 gap-2 p-2 rounded-lg">
           <p className="text-lg w-full font-semibold">{formattedDay + " : " + formattedDate}</p>
           <div className="absolute w-full bottom-2 overflow-x-auto">
             <DayTimelineBookings showPopup bookings={bookingsForDate} />
@@ -80,19 +81,19 @@ export default function RoomBookings() {
                 <span className="label">From:</span>
                 <input onChange={(e)=>{
                   if (e) {
-                    const date = new Date(e.target.value).toISOString().split('T')[0];
+                    const date = format(new Date(e.target.value), 'yyyy-MM-dd'); 
                     setStartDate(date);
                   }
-                }} type="date"/>
+                }} type="date" value={startDate}/>
               </label>
               <label className="input w-full">
                 <span className="label">To:</span>
                 <input onChange={(e)=>{
                   if (e) {
-                    const date = new Date(e.target.value).toISOString().split('T')[0];
+                    const date = format(new Date(e.target.value), 'yyyy-MM-dd');
                     setEndDate(date);
                   }
-                }} type="date" />
+                }} type="date" value={endDate}/>
               </label>
             </div>
             <div className="flex flex-col w-full gap-2">

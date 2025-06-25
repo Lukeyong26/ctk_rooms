@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Bookings, Room } from '../utils/types';
 import { getBookingsByDate, getRoomsList } from '../utils/firebase';
 import { Link } from 'react-router';
+import { format } from 'date-fns';
 
 export default function FreeRooms() {
     const [rooms, setRooms] = useState<Room[]>([]);
@@ -20,7 +21,7 @@ export default function FreeRooms() {
         const fetchRooms = async () => {
             setLoading(true);
             try {
-                const data : Bookings[] = await getBookingsByDate(new Date().toISOString().split('T')[0]);
+                const data : Bookings[] = await getBookingsByDate(format(new Date(), 'yyyy-MM-dd'));
                 const allRooms : Room[] = await getRoomsList();
 
                 const bookedRoomIds = data.filter(booking => {

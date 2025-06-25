@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Bookings } from '../utils/types';
 import { JSX } from 'react/jsx-runtime';
+import { getMinistries } from '../utils/firebase';
 
 interface DayTimelineProps {
   bookings: Bookings[];
@@ -17,20 +18,25 @@ const cssColSpanlist = [
   'col-span-9','col-span-10','col-span-11','col-span-12','col-span-13','col-span-14','col-span-15','col-span-16',
 ];
 
-const randomColor = [
-  'bg-[#B3C8CF]','bg-[#D1E7DD]','bg-[#F8D7DA]','bg-[#FFF3CD]','bg-[#CFE2FF]',
-  'bg-[#F9F9F9]','bg-[#D9EAD3]','bg-[#EAD1DC]','bg-[#D0E0E3]','bg-[#FFE6CC]',
-  'bg-[#F4CCCC]','bg-[#CFE2F3]','bg-[#EAD1DC]','bg-[#B6D7A8]','bg-[#C9DAF8]',
-]
-
 const DayTimelineBookings: React.FC<DayTimelineProps> = ({ bookings }) => {
+
+  const [ministries, setMinistries] = React.useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchMinistries = async () => {
+      const ministriesList = await getMinistries();
+      setMinistries(ministriesList || []);
+    };
+    fetchMinistries();
+  }, []);
+
   const renderTimeline = () => {
     const timelineElements = [];
     for (let hour = 6; hour <= 22; hour++) {
       const hourString = `${hour.toString().padStart(2, '0')}:00`;
 
       timelineElements.push(
-        <div key={hour} className='row-start-2 min-w-12'>
+        <div key={hour} className='row-start-4 min-w-12'>
           <p className='text-xs md:text-sm'>{hourString}</p>
         </div>
       );
@@ -44,16 +50,18 @@ const DayTimelineBookings: React.FC<DayTimelineProps> = ({ bookings }) => {
       const startHour = parseInt(booking.startTime.split(':')[0], 10);
       const hours = parseInt(booking.endTime.split(':')[0], 10) - startHour;
 
-      const randomNumber = Math.floor(Math.random() * randomColor.length);
+      const ministry = ministries.find((m) => m.id === booking.ministry);
+      const color = ministry?.color || '#ffffff';
+      const minName = ministry?.name || 'Unknown';
 
       const colStartClass = cssColStartlist[startHour - 6];
       const colSpanClass = cssColSpanlist[hours - 1];
 
       bookingElements.push(
-        <div key={index} className={`row-start-1 w-full h-6 ${colStartClass} ${colSpanClass}` }>
-            <div className={`flex h-full w-full ${randomColor[randomNumber]} items-center justify-center rounded-lg border-1 border-gray-400`}>
-                <div className='text-xs md:text-sm text-black font-semibold'>
-                    <div>{booking.bookedBy}</div>
+        <div key={index} style={{backgroundColor:color}} className={`overflow-hidden h-18 md:h-20 row-start-1 row-span-3 w-full p-2 rounded-lg border-1 border-gray-400 ${colStartClass} ${colSpanClass}` }>
+            <div className={`flex h-full w-full items-center`}>
+                <div className='text-xs md:text-sm text-gray-800 font-semibold'>
+                  <div>{minName}</div>              
                 </div>
             </div>
         </div>
@@ -64,8 +72,8 @@ const DayTimelineBookings: React.FC<DayTimelineProps> = ({ bookings }) => {
 
   
   return (
-      <div className="flex w-full mt-2">
-        <div className='grid grid-rows-2 grid-flow-row-dense w-full items-center'>
+      <div className="flex w-full">
+        <div className='grid grid-rows-4 grid-flow-row-dense w-full items-center'>
           {renderBookings()}
           {renderTimeline()}
         </div>

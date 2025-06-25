@@ -11,6 +11,7 @@ import FreeRooms from './pages/FreeRooms';
 import LoginPage from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import Profile from './pages/Profile';
+import CalendarPage from './pages/CalendarPage';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, Component: Home },
       { path: 'admin', Component: Admin },
+      { path: 'calendar', Component: CalendarPage},
       { path: 'bookings',
         children: [
           {index : true, Component: AllBookings},

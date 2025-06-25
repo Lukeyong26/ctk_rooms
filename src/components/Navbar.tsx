@@ -22,15 +22,16 @@ export default function MainNavbar() {
   });
 
   return (
-    <div className="w-full navbar bg-base-300 shadow-sm">
-      <div className="flex-1 flex-col px-4">
+    <div className="w-full navbar bg-main shadow-sm">
+      <div className="flex-1 flex-col px-4 text-gray-200">
         <a href="/" className="btn btn-ghost text-xl">CTK Rooms</a> 
       </div>
-      <div className="flex-none">
+      <div className="flex-none text-gray-200">
         {/* Desktop Menu */}
         <ul className="hidden md:flex menu menu-horizontal px-4 text-xs md:text-lg">
           <li><a href="/">Home</a></li>
-          <li><a href="/rooms">Available Rooms</a></li>
+          <li><a href="/calendar">Calendar</a></li>
+          {/* <li><a href="/rooms">Available Rooms</a></li> */}
           {user ? (
             <>
               {isAdmin && <li><a href="/admin">Admin</a></li>}
@@ -63,7 +64,7 @@ export default function MainNavbar() {
         {isMenuOpen && (
           <ul className="absolute right-0 mt-2 w-48 bg-base-100 shadow-lg rounded-lg p-2 text-lg z-10">
             <li><a href="/" className="block py-2 px-4 hover:bg-base-200">Home</a></li>
-            <li><a href="/rooms" className="block py-2 px-4 hover:bg-base-200">Available Rooms</a></li>
+            {/* <li><a href="/rooms" className="block py-2 px-4 hover:bg-base-200">Available Rooms</a></li> */}
             <li><a href="/help" className="block py-2 px-4 hover:bg-base-200">Help</a></li>
             <li><a href="/admin" className="block py-2 px-4 hover:bg-base-200">Admin</a></li>
           </ul>

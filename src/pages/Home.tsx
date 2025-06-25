@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import RoomCard from "../components/RoomCard";
 import { getBookingsByDate, getBookingsByDateAndRoom, getRoomsList,  } from "../utils/firebase";
 import { Bookings, Room } from "../utils/types";
+import { format } from "date-fns";
 
 export default function Home() {
 
-  const todaysDate = new Date().toISOString().split('T')[0];
+  const todaysDate = format(new Date(), 'yyyy-MM-dd');
 
   const [allRooms, setAllRooms] = useState<Room[]>([]);
   const [DisplayedRooms, setDisplayedRooms] = useState<Room[]>([]);
@@ -46,10 +47,10 @@ export default function Home() {
           <span className="label">Select Date:</span>
           <input onChange={(e)=>{
             if (e) {
-              const date = new Date(e.target.value).toISOString().split('T')[0];
+              const date = format(new Date(e.target.value), 'yyyy-MM-dd');
               setSelectedDate(date);
             }
-          }} type="date" />
+          }} type="date" value={selectedDate} />
         </label>
 
         <label className="select w-full">
