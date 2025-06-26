@@ -7,6 +7,7 @@ import { format } from "date-fns";
 export default function Home() {
 
   const todaysDate = format(new Date(), 'yyyy-MM-dd');
+  
 
   const [allRooms, setAllRooms] = useState<Room[]>([]);
   const [DisplayedRooms, setDisplayedRooms] = useState<Room[]>([]);
@@ -42,7 +43,7 @@ export default function Home() {
 
   return (
     <div className="h-full w-full">
-      <div className="flex justify-center gap-2 w-full">
+      <div className="flex flex-col md:flex-row justify-center gap-2 w-full">
         <label className="input w-full">
           <span className="label">Select Date:</span>
           <input onChange={(e)=>{
@@ -67,12 +68,12 @@ export default function Home() {
       </div>
       
       {!loading ? (
-      <div className="grid grid-cols-1 gap-6 w-full mt-10">
+      <div className="grid grid-cols-1 gap-6 w-full mt-4">
         {DisplayedRooms.map((room) => {
           const roomBookings = todaysBookings.filter((booking) => booking.roomId === room.id);
 
           return (
-            <RoomCard key={room.id} imageUrl={"https://hosanna.com.sg/wp-content/uploads/2023/06/2022-08-02-1024x768.jpg"} id={room.id} title={room.name} desc={room.desc} bookings={roomBookings} />
+            <RoomCard key={room.id} imageUrl={"/images/" + room.img} id={room.id} title={room.name} desc={room.desc} bookings={roomBookings} />
           )
         })}
       </div>

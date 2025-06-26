@@ -64,7 +64,8 @@ export default function Admin() {
     const room: Room = {
       id: id,
       name: name,
-      desc: formData.get('desc') as string
+      desc: formData.get('desc') as string,
+      img: ''
     }
     await addRoom(room);
     (document.getElementById('add-room-form') as HTMLFormElement).reset();
@@ -116,7 +117,7 @@ export default function Admin() {
         <li><a className={`${page === 'purge'? 'menu-active': ''}`}  onClick={() => {setPage('purge')}}>Dont Touch</a></li>
       </ul>
       
-      <div className="flex flex-col w-full">
+      <div className="flex flex-col w-full bg-sub p-4 rounded-lg">
         
         { /* Approve Pending Bookings */}
         { page === 'pending' && (

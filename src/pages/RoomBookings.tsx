@@ -67,11 +67,11 @@ export default function RoomBookings() {
   return (
     <div className="h-full w-full">
       {room && (
-        <div className='relative flex flex-col gap-4 w-full h-full bg-base-300 p-4 rounded-lg'>
+        <div className='relative flex flex-col gap-4 w-full h-full bg-sub p-4 rounded-lg'>
           <p className='text-4xl font-semibold'>{room.name}</p>
           <p className='text-lg font-semibold'>{room.desc}</p>
           <img 
-            src={"https://hosanna.com.sg/wp-content/uploads/2023/06/2022-08-02-1024x768.jpg"} alt={room.name} 
+            src={"/images/" + room.img} alt={room.name} 
             className=' object-cover rounded-lg h-80'
           />
           <div className="relative flex flex-col gap-2 p-4 w-full">

@@ -30,7 +30,7 @@ export const getRoomsList = async () => {
   const collectionRef = collection(db, 'roomsList');
   const snapshot = await getDocs(collectionRef);
   snapshot.forEach((doc) => {
-      roomsList.push({name: doc.data().name, id: doc.data().id, desc: doc.data().desc});
+      roomsList.push({name: doc.data().name, id: doc.data().id, desc: doc.data().desc, img: doc.data().img});
   });
   return roomsList;
 }
@@ -41,7 +41,7 @@ export const getRoomById = async (roomId: string) => {
   const snapshot = await getDocs(q);
   let room: Room | null = null;
   snapshot.forEach((doc) => {
-      room = {name: doc.data().name, id: doc.data().id, desc: doc.data().desc};
+      room = {name: doc.data().name, id: doc.data().id, desc: doc.data().desc, img: doc.data().img};
   });
   return room;
 }

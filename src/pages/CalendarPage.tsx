@@ -114,7 +114,7 @@ const BookingCalendar = () => {
         className={`
           h-20 border p-2 relative transition-all duration-200 cursor-pointer
           hover:bg-blue-50 hover:border-blue-300
-          ${isToday ? 'bg-sub border-accenttwo' : 'bg-sub border-gray-200'}
+          ${isToday ? 'bg-sub border-accentOne' : 'border-gray-300'}
         `}
       >
         <div className={`text-sm font-medium ${isToday ? 'text-accenttwo' : ''}`}>
@@ -139,19 +139,19 @@ const BookingCalendar = () => {
   const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-sub rounded-lg">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="max-w-6xl mx-auto rounded-lg">
+      <div className="bg-surface dark:bg-surfaceDark rounded-lg shadow-lg overflow-hidden">
         {/* Header */}
         <div className="bg-main text-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Calendar className="w-8 h-8" />
-              <h1 className="text-2xl font-bold">Building Booking Calendar</h1>
+              <h1 className="text-2xl font-bold">Calendar View</h1>
             </div>
             <div className="flex items-center space-x-4">
               <button
                 onClick={goToPreviousMonth}
-                className="p-2 hover:bg-mainLight rounded-lg transition-colors"
+                className="p-2 hover:bg-accentOne hover:cursor-pointer rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -160,7 +160,7 @@ const BookingCalendar = () => {
               </h2>
               <button
                 onClick={goToNextMonth}
-                className="p-2 hover:bg-mainLight rounded-lg transition-colors"
+                className="p-2 hover:bg-accentOne hover:cursor-pointer rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>
@@ -203,7 +203,7 @@ const BookingCalendar = () => {
       {/* Booking Details Modal */}
       {selectedDay && (
         <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-hidden flex flex-col">
+          <div className="bg-surface dark:bg-surfaceDark rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-hidden flex flex-col">
             <div className="bg-main text-white p-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">
                 Bookings for {new Date(selectedDay.date).toLocaleDateString('en-US', {
@@ -224,7 +224,7 @@ const BookingCalendar = () => {
               {selectedDay.bookings.length > 0 ? (
                 <div className="space-y-3">
                   {selectedDay.bookings.map(booking => (
-                    <div key={booking.id} className="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                    <div key={booking.id} className="border  border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h4 className="font-semibold text-xl text-gray-900 mb-2">{ministries.find(min => min.id === booking.ministry)?.name}</h4>
@@ -245,7 +245,7 @@ const BookingCalendar = () => {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <Calendar className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <Calendar className="w-16 h-16  text-gray-300 mx-auto mb-4" />
                   <h4 className="text-lg font-medium text-gray-600 mb-2">No bookings scheduled</h4>
                   <p className="text-gray-500">This day is available for new bookings.</p>
                 </div>
@@ -255,7 +255,6 @@ const BookingCalendar = () => {
               <button
                 onClick={() => {
                   setBookingRoom(true);
-                  
                 }}
                 className="w-full bg-main hover:bg-mainLight text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center space-x-2"
               >
@@ -269,7 +268,7 @@ const BookingCalendar = () => {
       {/* Booking Modal */}
       { bookingRoom && (
         <div className="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full overflow-hidden flex flex-col">
+          <div className="bg-surface dark:bg-surfaceDark rounded-lg shadow-xl max-w-2xl max-h-200 w-full overflow-hidden flex flex-col">
             <div className="bg-main text-white p-4 flex items-center justify-between">
               <h3 className="text-lg font-semibold">Book a Room</h3>
               <button
@@ -279,7 +278,7 @@ const BookingCalendar = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className='p-10'>
+            <div className='p-10 overflow-y-auto flex-1'>
               <RoomBookingForm date={selectedDay?.date} roomsList={roomsList}/>
             </div>
           </div>

@@ -35,4 +35,5 @@ export interface Room {
     id: string;
     name: string;
     desc: string;
+    img: string;
 }

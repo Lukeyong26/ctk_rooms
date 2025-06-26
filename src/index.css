@@ -4,12 +4,15 @@
 @plugin "daisyui";
 
 @theme {
-    --color-main: #5aa9e6;
-    --color-mainLight: #7fc8f8;
-    --color-mainDark: #3a7bbf;
-    --color-sub: #f9f9f9;
-    --color-accentOne: #ffe45e;
-    --color-accenttwo: #ff6392;
+    --color-main: #4b86c3;
+    --color-sub: #8fb7e0;
+    --color-surface: #EEEEEE;
+    --color-accentOne: #5d9ad9;
+
+    --color-mainDark: #3c76b4;
+    --color-subDark: #1f4770;
+    --color-surfaceDark: #333333;
+    --color-accentOneDark: #2663a1;
 }
 
 
