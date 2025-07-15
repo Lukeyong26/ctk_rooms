@@ -189,6 +189,12 @@ export const newUser = async (uid: string, email: string) => {
   await setDoc(docRef, newUser);
 }
 
+export const doesUserExist = async (uid: string) => {
+  const docRef = doc(db, 'users', uid);
+  const snapshot = await getDoc(docRef);
+  return snapshot.exists();
+}
+
 export const getUserRole = async (uid: string) => {
   const docRef = doc(db, 'users', uid);
   const snapshot = await getDoc(docRef);

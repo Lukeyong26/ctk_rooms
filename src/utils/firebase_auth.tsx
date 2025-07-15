@@ -6,7 +6,7 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
 } from "firebase/auth";
-import { app, newUser } from "./firebase";
+import { app, doesUserExist, newUser } from "./firebase";
 
 export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
@@ -45,6 +45,12 @@ export const logout = async () => {
 export const signupWithGoogle = async () => {
     try {
         const result = await signInWithPopup(auth, googleProvider);
+        //check if user already exists
+        if (await doesUserExist(result.user.uid)) {
+            console.log("User already exists, skipping new user creation.");
+            return result.user;
+        }
+        // If user does not exist, create a new user
         if (result.user.email) {
             newUser(result.user.uid, result.user.email);
         } else {
