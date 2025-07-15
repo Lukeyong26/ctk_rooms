@@ -44,7 +44,7 @@ export default function Home() {
   return (
     <div className="h-full w-full">
       <div className="flex flex-col md:flex-row justify-center gap-2 w-full">
-        <label className="input w-full">
+        <label className="input w-full bg-sub dark:bg-subDark">
           <span className="label">Select Date:</span>
           <input onChange={(e)=>{
             if (e) {
@@ -54,7 +54,7 @@ export default function Home() {
           }} type="date" value={selectedDate} />
         </label>
 
-        <label className="select w-full">
+        <label className="select w-full bg-sub dark:bg-subDark">
           <span className="label">Room:</span>
           <select onChange={(e) => {
             setSelectedRoom(e.target.value);

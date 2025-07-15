@@ -13,7 +13,7 @@ interface RoomCardProps {
 
 const RoomCard: React.FC<RoomCardProps> = ({ id, imageUrl, title, desc, bookings }) => {
   return (
-    <div className='relative p-2 h-80 w-full shadow-sm shadow-gray-500 rounded-lg'>
+    <div className='relative p-2 h-80 w-full shadow-sm shadow-gray-500 dark:shadow-black rounded-lg'>
       <div className='relative h-6/8 w-full text-gray-200 '>
         <div className='absolute z-1 flex flex-col w-full h-full'>
           <div className='p-4 w-2/3'>
@@ -27,7 +27,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ id, imageUrl, title, desc, bookings
         </div>
         <img 
             src={imageUrl} alt={title} 
-            className='object-cover bg-main w-full h-full brightness-70 rounded-lg'
+            className='object-cover w-full h-full brightness-70 rounded-lg'
             onError={({currentTarget}) => {
               currentTarget.onerror = null; // Prevent infinite loop if image fails to load
               currentTarget.src = 'https://buildingontheword.org/files/2019/09/cross-2.jpg'

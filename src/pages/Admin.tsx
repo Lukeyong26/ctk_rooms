@@ -107,7 +107,7 @@ export default function Admin() {
   return (
     <div className="flex flex-row w-full gap-10 p-10">
 
-      <ul className="menu menu-lg bg-base-200 rounded-box w-62 gap-2">
+      <ul className="menu menu-lg bg-sub rounded-box w-62 gap-2">
         <li className="menu-title">Admin Functions</li>
         <li><a className={`${page === 'pending'? 'menu-active': ''}`} onClick={() => {setPage('pending')}}>Pending Bookings</a></li>
         <li><a className={`${page === 'makeBooking'? 'menu-active': ''}`}  onClick={() => {setPage('makeBooking')}}>Make A Booking</a></li>

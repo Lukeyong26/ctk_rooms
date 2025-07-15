@@ -51,7 +51,7 @@ export default function RoomBookings() {
       const bookingsForDate = bookings.filter(booking => booking.date === format(new Date(startDateObj), 'yyyy-MM-dd'));
       
       booksRender.push(
-        <div key={formattedDate} className="relative flex flex-col w-full h-40 bg-base-100 gap-2 p-2 rounded-lg">
+        <div key={formattedDate} className="relative flex flex-col w-full h-40 bg-white dark:bg-accentOneDark gap-2 p-2 rounded-lg">
           <p className="text-lg w-full font-semibold">{formattedDay + " : " + formattedDate}</p>
           <div className="absolute w-full bottom-2 overflow-x-auto">
             <DayTimelineBookings showPopup bookings={bookingsForDate} />
@@ -67,7 +67,7 @@ export default function RoomBookings() {
   return (
     <div className="h-full w-full">
       {room && (
-        <div className='relative flex flex-col gap-4 w-full h-full bg-sub p-4 rounded-lg'>
+        <div className='relative flex flex-col gap-4 w-full h-full bg-sub dark:bg-subDark p-4 rounded-lg'>
           <p className='text-4xl font-semibold'>{room.name}</p>
           <p className='text-lg font-semibold'>{room.desc}</p>
           <img 
@@ -77,7 +77,7 @@ export default function RoomBookings() {
           <div className="relative flex flex-col gap-2 p-4 w-full">
             <p className="text-lg font-semibold">Bookings:</p>
             <div className="flex flex-row gap-2 mb-2 h-full">
-              <label className="input w-full">
+              <label className="input w-full bg-sub dark:bg-accentOneDark">
                 <span className="label">From:</span>
                 <input onChange={(e)=>{
                   if (e) {
@@ -86,7 +86,7 @@ export default function RoomBookings() {
                   }
                 }} type="date" value={startDate}/>
               </label>
-              <label className="input w-full">
+              <label className="input w-full bg-sub dark:bg-accentOneDark">
                 <span className="label">To:</span>
                 <input onChange={(e)=>{
                   if (e) {
