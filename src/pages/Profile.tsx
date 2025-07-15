@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 import { auth, logout } from '../utils/firebase_auth';
 import { onAuthStateChanged, sendPasswordResetEmail, User } from 'firebase/auth';
-import { deleteBookingByQuery, getUserRole } from '../utils/firebase';
+import { getUserRole } from '../utils/firebase';
 import { useState } from 'react';
 
 export default function Profile() {
@@ -47,10 +47,6 @@ export default function Profile() {
     }
   }
 
-  const deleteLuke = async () => { 
-    deleteBookingByQuery();
-  }
-
   return (
     <div>
       <div className="max-w-md mx-auto p-6 border border-gray-300 rounded-lg">
@@ -70,7 +66,6 @@ export default function Profile() {
           <button className="btn" onClick={handleResetPassword}>Reset Password</button>
         </div>
       </div>
-      {/* <button onClick={deleteLuke}>Delete Luke!</button> */}
     </div>
   )
 }
