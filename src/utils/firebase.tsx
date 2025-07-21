@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, doc, setDoc, getDocs, query, where, addDoc, deleteDoc, getDoc, QueryDocumentSnapshot, updateDoc } from "firebase/firestore";
 import { BookingFormData, Bookings, Room } from "./types";
+import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -18,6 +19,7 @@ const firebaseConfig = {
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+export const auth = getAuth(app);
 
 // ROOMS FUNCTIONS
 export const addRoom = async (room: Room) => {
@@ -180,6 +182,10 @@ export const deleteBookingByQuery = async () => {
 }
 
 // AUTH
+export const isLoggedIn = () => {
+  return auth.currentUser !== null;
+}
+
 export const newUser = async (uid: string, email: string) => {
   const docRef = doc(db, 'users', uid);
   const newUser = {

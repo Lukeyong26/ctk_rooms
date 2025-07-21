@@ -2,6 +2,7 @@ import React from 'react';
 import DayTimeline from './DayTimeline';
 import { Bookings } from '../utils/types';
 import { Link } from 'react-router'; 
+import { isLoggedIn } from '../utils/firebase';
 
 interface RoomCardProps {
   id: string;
@@ -38,7 +39,7 @@ const RoomCard: React.FC<RoomCardProps> = ({ id, imageUrl, title, desc, bookings
       
       <div className='flex flex-row h-2/8 gap-2 pt-2 w-full'>
         <Link to={'/rooms/'+id} className='h-full w-full'><button className="btn rounded-lg w-full h-full border-0 bg-sub dark:bg-subDark shadow-sm">See Room Bookings</button></Link>
-        <Link to={'/bookings/'+id} className='h-full w-full'><button className="btn rounded-lg w-full h-full border-0 bg-sub dark:bg-subDark shadow-sm">Book Room</button></Link>
+        {isLoggedIn() && <Link to={'/bookings/'+id} className='h-full w-full'><button className="btn rounded-lg w-full h-full border-0 bg-sub dark:bg-subDark shadow-sm">Book Room</button></Link>}
       </div>
     </div>
   );

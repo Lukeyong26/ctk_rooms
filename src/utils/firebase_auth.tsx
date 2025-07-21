@@ -6,9 +6,8 @@ import {
     GoogleAuthProvider,
     signInWithPopup,
 } from "firebase/auth";
-import { app, doesUserExist, newUser } from "./firebase";
+import { auth, doesUserExist, newUser } from "./firebase";
 
-export const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Login function

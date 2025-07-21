@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { auth } from "../utils/firebase_auth";
+import { auth } from "../utils/firebase";
 import { onAuthStateChanged, User } from "firebase/auth";
 import { getUserRole } from "../utils/firebase";
 

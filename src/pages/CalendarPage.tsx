@@ -5,6 +5,7 @@ import { Room } from '../utils/types';
 import { getBookingsByDateRange, getMinistries, getRoomsList } from '../utils/firebase';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import RoomBookingForm from '../components/booking/RoomBookingForm';
+import { isLoggedIn } from '../utils/firebase';
 
 const BookingCalendar = () => {
   
@@ -252,7 +253,7 @@ const BookingCalendar = () => {
               )}
             </div>
             <div className="border-t border-gray-200 p-4 flex-shrink-0">
-              <button
+              {isLoggedIn() && <button
                 onClick={() => {
                   setBookingRoom(true);
                 }}
@@ -260,7 +261,7 @@ const BookingCalendar = () => {
               >
                 <Calendar className="w-5 h-5" />
                 <span>Book a Room</span>
-              </button>
+              </button>}
             </div>
           </div>
         </div>

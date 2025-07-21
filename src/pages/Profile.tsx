@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
-import { auth, logout } from '../utils/firebase_auth';
+import { logout } from '../utils/firebase_auth';
 import { onAuthStateChanged, sendPasswordResetEmail, User } from 'firebase/auth';
-import { getUserRole } from '../utils/firebase';
+import { auth, getUserRole } from '../utils/firebase';
 import { useState } from 'react';
 
 export default function Profile() {
