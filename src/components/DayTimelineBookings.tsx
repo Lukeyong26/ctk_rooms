@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
 import { Bookings } from '../utils/types';
 import { JSX } from 'react/jsx-runtime';
-import { getMinistries } from '../utils/firebase';
 
 interface DayTimelineProps {
   bookings: Bookings[];
@@ -20,15 +18,15 @@ const cssColSpanlist = [
 
 const DayTimelineBookings: React.FC<DayTimelineProps> = ({ bookings }) => {
 
-  const [ministries, setMinistries] = React.useState<any[]>([]);
+  // const [ministries, setMinistries] = React.useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchMinistries = async () => {
-      const ministriesList = await getMinistries();
-      setMinistries(ministriesList || []);
-    };
-    fetchMinistries();
-  }, []);
+  // useEffect(() => {
+  //   const fetchMinistries = async () => {
+  //     const ministriesList = await getMinistries();
+  //     setMinistries(ministriesList || []);
+  //   };
+  //   fetchMinistries();
+  // }, []);
 
   const renderTimeline = () => {
     const timelineElements = [];

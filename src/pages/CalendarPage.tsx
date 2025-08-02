@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Calendar, Clock, MapPin, X } from 'lucide-react';
-import { Bookings, Ministry } from '../utils/types';
-import { Room } from '../utils/types';
-import { getBookingsByDateRange, getMinistries, getRoomsList } from '../utils/firebase';
+import { Bookings } from '../utils/types';
+import { getBookingsByDateRange } from '../utils/firebase';
 import { format, startOfMonth, endOfMonth } from 'date-fns';
 import RoomBookingForm from '../components/booking/RoomBookingForm';
 import { isLoggedIn } from '../utils/firebase';
+import { useGeneralStore } from '../utils/store';
 
 const BookingCalendar = () => {
   
@@ -17,22 +17,9 @@ const BookingCalendar = () => {
   }
   const [selectedDay, setSelectedDay] = useState<SelectedDay | null>(null);
   const [bookingRoom , setBookingRoom] = useState<boolean>(false);
-  const [roomsList, setRoomsList] = useState<Room[]>([]);
-  const [ministries, setMinistries] = useState<Ministry[]>([]);
 
-  useEffect(() => {
-    const fetchRooms = async () => {
-      const rooms = await getRoomsList();
-      console.log("Rooms fetched: ", rooms);
-      setRoomsList(rooms);
-    }
-    const fetxhMinistries = async () => {
-      const ministriesList = await getMinistries();
-      setMinistries(ministriesList || []);
-    }
-    fetxhMinistries();
-    fetchRooms();
-  }, []);
+  const roomsList = useGeneralStore((state) => state.rooms);
+  // const ministries = useGeneralStore((state) => state.ministries);
   
   useEffect(() => {
     const fetchBookings = async () => {

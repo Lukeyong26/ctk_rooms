@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Calendar, Clock, MapPin, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Clock, MapPin } from 'lucide-react';
 import { getBookingsByDateRange } from '../utils/firebase';
 import { addDays, format } from 'date-fns';
 import { Bookings } from '../utils/types';

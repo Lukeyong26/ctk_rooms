@@ -1,8 +1,5 @@
-import React, { useEffect } from 'react';
 import { Bookings } from '../utils/types';
 import { JSX } from 'react/jsx-runtime';
-import { getMinistries } from '../utils/firebase';
-import { useAuthStore } from '../utils/store';
 
 interface DayTimelineProps {
   bookings: Bookings[];
@@ -21,16 +18,8 @@ const cssColSpanlist = [
 
 const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
 
-  const [ministries, setMinistries] = React.useState<any[]>([]);
   // const isAdmin = useAuthStore((state) => state.isAdmin);
-  
-  useEffect(() => {
-    const fetchMinistries = async () => {
-      const ministriesList = await getMinistries();
-      setMinistries(ministriesList || []);
-    };
-    fetchMinistries();
-  }, []);
+  // const userMinistry = useAuthStore((state) => state.ministry);
 
   const renderTimeline = () => {
     const timelineElements = [];
