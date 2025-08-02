@@ -28,7 +28,7 @@ export interface BookingFormData {
 export interface Ministry {
     id: string;
     name: string;
-    color: string;
+    email: string;
 }
 
 export interface Room {

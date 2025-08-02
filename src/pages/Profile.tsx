@@ -1,27 +1,15 @@
 import { useNavigate } from 'react-router';
 import { logout } from '../utils/firebase_auth';
-import { onAuthStateChanged, sendPasswordResetEmail, User } from 'firebase/auth';
-import { auth, getUserRole } from '../utils/firebase';
-import { useState } from 'react';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../utils/firebase';
+import { useAuthStore } from '../utils/store';
 
 export default function Profile() {
 
-  const [user, setUser] = useState<User | null>(null);
-  const [role, setRole] = useState<string | null>(null);
+  const user = useAuthStore((state) => state.user);
+  const role = useAuthStore((state) => state.isAdmin? "admin" : "user");
   
   const nav = useNavigate();
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      setUser(user);
-      const userRole = await getUserRole(user.uid);
-      if (userRole) {
-        setRole(userRole);
-      } else {
-        console.error("User role not found");
-      }
-    }
-  });
 
   const handleSignOut = async () => {
     try {

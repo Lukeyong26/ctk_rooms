@@ -50,18 +50,18 @@ const DayTimelineBookings: React.FC<DayTimelineProps> = ({ bookings }) => {
       const startHour = parseInt(booking.startTime.split(':')[0], 10);
       const hours = parseInt(booking.endTime.split(':')[0], 10) - startHour;
 
-      const ministry = ministries.find((m) => m.id === booking.ministry);
-      const color = ministry?.color || '#ffffff';
-      const minName = ministry?.name || 'Unknown';
+      // const ministry = ministries.find((m) => m.id === booking.ministry);
+      // const color = ministry?.color || '#ffffff';
+      // const minName = ministry?.name || 'Unknown';
 
       const colStartClass = cssColStartlist[startHour - 6];
       const colSpanClass = cssColSpanlist[hours - 1];
 
       bookingElements.push(
-        <div key={index} style={{backgroundColor:color}} className={`overflow-hidden h-18 md:h-20 row-start-1 row-span-3 w-full p-2 rounded-lg border-1 border-gray-400 ${colStartClass} ${colSpanClass}` }>
-            <div className={`flex h-full w-full items-center`}>
+        <div key={index} className={`overflow-hidden bg-gray-200 h-18 md:h-20 row-start-1 row-span-3 w-full p-2 rounded-lg border-1 border-gray-400 ${colStartClass} ${colSpanClass}` }>
+            <div className={`flex h-full w-full items-center justify-center`}>
                 <div className='text-xs md:text-sm text-gray-800 font-semibold'>
-                  <div>{minName}</div>              
+                  BOOKED              
                 </div>
             </div>
         </div>

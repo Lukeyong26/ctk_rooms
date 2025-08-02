@@ -78,7 +78,7 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
     for (let hour = 6; hour < 22; hour++) {
       const hourString = `${hour.toString().padStart(2, '0')}:00`;
       const hourPlusOne = `${(hour + 1).toString().padStart(2, '0')}:00`;
-      const isEventHour = bookings.some(booking => isHourInRange(hourString, booking.startTime, booking.endTime));
+      const isEventHour = bookings.some(booking => ((isHourInRange(hourString, booking.startTime, booking.endTime))));
       if (!pickEndTime) {
         timeSlots.push(
           <button key={hour} onClick={() => {

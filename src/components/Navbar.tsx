@@ -1,25 +1,11 @@
 import { useState } from "react";
-import { auth } from "../utils/firebase";
-import { onAuthStateChanged, User } from "firebase/auth";
-import { getUserRole } from "../utils/firebase";
+
+import { useAuthStore } from "../utils/store";
 
 export default function MainNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
-      setUser(user);
-      const userRole = await getUserRole(user.uid);
-      if (userRole === "admin") {
-        setIsAdmin(true);
-      }
-    } else {
-      setUser(null);
-      setIsAdmin(false);
-    }
-  });
+  const user = useAuthStore((state) => state.user);
+  const isAdmin = useAuthStore((state) => state.isAdmin);
 
   return (
     <div className="w-full navbar bg-main dark:bg-mainDark shadow-sm">
@@ -31,10 +17,14 @@ export default function MainNavbar() {
         <ul className="hidden md:flex menu menu-horizontal px-4 text-xs md:text-lg">
           <li><a href="/">Home</a></li>
           <li><a href="/calendar">Calendar</a></li>
-          {/* <li><a href="/rooms">Available Rooms</a></li> */}
+          
           {user ? (
             <>
-              {isAdmin && <li><a href="/admin">Admin</a></li>}
+              {isAdmin && (<>
+                  <li><a href="/weekly">Week View</a></li>
+                  <li><a href="/admin">Admin</a></li>
+                </>)
+              }
               <li><a href="profile">User</a></li>
             </>
           ) : (<li><a href="/auth/login">Login</a></li>)}

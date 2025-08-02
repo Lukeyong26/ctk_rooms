@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Bookings } from '../utils/types';
 import { JSX } from 'react/jsx-runtime';
 import { getMinistries } from '../utils/firebase';
+import { useAuthStore } from '../utils/store';
 
 interface DayTimelineProps {
   bookings: Bookings[];
@@ -21,6 +22,7 @@ const cssColSpanlist = [
 const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
 
   const [ministries, setMinistries] = React.useState<any[]>([]);
+  // const isAdmin = useAuthStore((state) => state.isAdmin);
   
   useEffect(() => {
     const fetchMinistries = async () => {
@@ -37,7 +39,9 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
 
       timelineElements.push(
         <div key={hour} className='row-start-2 min-w-12'>
-          <p className='text-xs md:text-sm'>{hourString}</p>
+          <div className='flex h-full items-center'>
+            <p className='text-xs md:text-sm'>{hourString}</p>
+          </div>
         </div>
       );
     }
@@ -50,23 +54,19 @@ const DayTimeline: React.FC<DayTimelineProps> = ({ bookings }) => {
       const startHour = parseInt(booking.startTime.split(':')[0], 10);
       const hours = parseInt(booking.endTime.split(':')[0], 10) - startHour;
 
-      const ministry = ministries.find((m) => m.id === booking.ministry);
-      const color = ministry?.color || '#ffffff';
-      const minName = ministry?.name || 'Unknown';
+      // const ministry = ministries.find((m) => m.id === booking.ministry);
+      // const color = ministry?.color || '#ffffff';
+      // const minName = ministry?.name || 'Unknown';
 
       const colStartClass = cssColStartlist[startHour - 6];
       const colSpanClass = cssColSpanlist[hours - 1];
 
       bookingElements.push(
-        <div key={index} className={`row-start-1 w-full h-5  ${colStartClass} ${colSpanClass}` }>
-          <div className="tooltip h-full w-full">
-            <div className={`tooltip-content`} style={{backgroundColor:color}}>
-              <div className='text-sm md:text-lg text-gray-800'>
-                <div>Booked By: {minName}</div>
-                <div>From: {booking.startTime} - {booking.endTime}</div>
-              </div>
+        <div key={index} className={`row-start-1 w-full h-10  ${colStartClass} ${colSpanClass}` }>
+          <div className={`h-full rounded-sm border-1 shadow-sm border-gray-400 bg-accentOne`}>
+            <div className='flex text-xs h-full items-center justify-center'>
+              BOOKED
             </div>
-            <div className={`h-full w-full rounded-lg border-1 border-gray-400`} style={{backgroundColor: color}}/>
           </div>
         </div>
       );

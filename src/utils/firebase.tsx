@@ -49,17 +49,33 @@ export const getRoomById = async (roomId: string) => {
 }
 
 // MINISTRY FUNCTIONS
-export const addMinistry = async (ministry: {id: string, name: string; color: string; }) => {
+export const addMinistry = async (ministry: {id: string, name: string; email: string }) => {
   const docRef = doc(db, 'ministries', ministry.id);
   await setDoc(docRef, ministry);
 }
 
+export const deleteMinistry = async (id: string) => {
+  const docRef = doc(db, 'ministries', id);
+  await deleteDoc(docRef);
+}
+
+export const getUserMinistry = async (email: string) => {
+  const collectionRef = collection(db, 'ministries');
+  const q = query(collectionRef, where("email", "==", email));
+  const snapshot = await getDocs(q);
+  let ministry: {id: string, name: string; email: string} | null = null;
+  snapshot.forEach((doc) => {
+      ministry = {id: doc.id, name: doc.data().name, email: doc.data().email};
+  });
+  return ministry;
+}
+
 export const getMinistries = async () => {
-  const ministriesList: {id: string, name: string; color: string; }[] = [];
+  const ministriesList: {id: string, name: string, email: string }[] = [];
   const collectionRef = collection(db, 'ministries');
   const snapshot = await getDocs(collectionRef);
   snapshot.forEach((doc) => {
-      ministriesList.push({id: doc.id, name: doc.data().name, color: doc.data().color});
+      ministriesList.push({id: doc.id, name: doc.data().name, email: doc.data().email});
   });
   return ministriesList;
 }
@@ -74,7 +90,7 @@ export const getBookingsByDate = async (date : string) => {
   const bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
-  const q = query(collectionRef, where("date", "==", date));
+  const q = query(collectionRef, where("date", "==", date), where("pending", "==", false));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
       bookingsList.push({id: doc.id, date: doc.data().date, roomId: doc.data().roomId, 
@@ -90,7 +106,7 @@ export const getBookingsByDateRange = async (startDate: string, endDate: string)
   let bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
-  const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate));
+  const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate), where("pending", "==", false));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
     bookingsList = bookingsList.concat(addBookingToList(doc));
@@ -102,7 +118,7 @@ export const getBookingsByDateRangeAndRoom = async (startDate: string, endDate: 
   let bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
-  const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate), where("roomId", "==", roomId));
+  const q = query(collectionRef, where("date", ">=", startDate), where("date", "<=", endDate), where("roomId", "==", roomId), where("pending", "==", false));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
     bookingsList = bookingsList.concat(addBookingToList(doc));
@@ -114,7 +130,7 @@ export const getBookingsByDateAndRoom = async (date: string, roomId: string) => 
   let bookingsList: Bookings[] = [];
 
   const collectionRef = collection(db, 'roomBookings');
-  const q = query(collectionRef, where("date", "==", date), where("roomId", "==", roomId));
+  const q = query(collectionRef, where("date", "==", date), where("roomId", "==", roomId), where("pending", "==", false));
   const snapshot = await getDocs(q);
   snapshot.forEach((doc) => {
     bookingsList = bookingsList.concat(addBookingToList(doc));

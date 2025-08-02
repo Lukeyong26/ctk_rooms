@@ -8,7 +8,6 @@ export default function Home() {
 
   const todaysDate = format(new Date(), 'yyyy-MM-dd');
   
-
   const [allRooms, setAllRooms] = useState<Room[]>([]);
   const [DisplayedRooms, setDisplayedRooms] = useState<Room[]>([]);
   const [todaysBookings, setTodaysBookings] = useState<Bookings[]>([]);

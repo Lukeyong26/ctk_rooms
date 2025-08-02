@@ -123,7 +123,7 @@ const BookingCalendar = () => {
         </div>
         {hasBookings && (
           <div className="absolute bottom-1 right-1">
-            <span className="inline-flex items-center justify-center w-6 h-6 text-xs font-bold bg-accentOne rounded-full">
+            <span className="inline-flex items-center justify-center w-8 h-8 text-lsm bg-accentOne rounded-full">
               {bookingCount}
             </span>
           </div>
@@ -228,7 +228,7 @@ const BookingCalendar = () => {
                     <div key={booking.id} className="border  border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="font-semibold text-xl text-gray-900 mb-2">{ministries.find(min => min.id === booking.ministry)?.name}</h4>
+                          {/* <h4 className="font-semibold text-xl text-gray-900 mb-2">{ministries.find(min => min.id === booking.ministry)?.name}</h4> */}
                           <div className="space-y-1 text-sm text-gray-600">
                             <div className="flex items-center space-x-2">
                               <MapPin className="w-4 h-4" />

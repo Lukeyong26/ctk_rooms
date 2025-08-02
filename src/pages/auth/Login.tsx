@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { login, signupWithGoogle } from '../../utils/firebase_auth';
-import GoogleLoginButton from '../../components/icons/GoogleLoginSVG';
+import { login } from '../../utils/firebase_auth';
+// import GoogleLoginButton from '../../components/icons/GoogleLoginSVG';
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -10,18 +10,17 @@ const LoginPage: React.FC = () => {
 
     const handleEmailLogin = (e: React.FormEvent) => {
         e.preventDefault();
-        // Handle email and password login logic here
         login(email, password)
         nav('/');
     };
 
-    const handleGoogleLogin = () => {
-        signupWithGoogle().then(() => {
-            nav('/');
-        }).catch((error) => {
-            console.error("Error signing in with Google: ", error);
-        });
-    };
+    // const handleGoogleLogin = () => {
+    //     signupWithGoogle().then(() => {
+    //         nav('/');
+    //     }).catch((error) => {
+    //         console.error("Error signing in with Google: ", error);
+    //     });
+    // };
 
     return (
         <div className="max-w-md mx-auto p-6 border border-gray-300 rounded-lg">
@@ -57,7 +56,7 @@ const LoginPage: React.FC = () => {
                 </button>
             </form>
 
-            <button
+            {/* <button
                 onClick={handleGoogleLogin}
                 className="btn w-full border-0 py-2 mt-4 bg-[#F2F2F2] text-[#1F1F1F] rounded-md hover:pointer-coarse:"
             >
@@ -70,7 +69,7 @@ const LoginPage: React.FC = () => {
                 <button className="w-full py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition">
                     Sign Up
                 </button>
-            </Link>
+            </Link> */}
             
         </div>
     );
