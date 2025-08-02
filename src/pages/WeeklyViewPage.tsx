@@ -9,6 +9,7 @@ const WeeklyBookingView = () => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [bookings, setBookings] = useState<Bookings[]>([]);
   const roomsList = useGeneralStore(state => state.rooms);
+  const ministriesList = useGeneralStore(state => state.ministries);
 
   // Get start of current week (Sunday)
   const getWeekStart = (date: Date) => {
@@ -69,6 +70,11 @@ const WeeklyBookingView = () => {
   const getRoomName = (roomId: string) => {
     const room = roomsList.find(room => room.id === roomId);
     return room ? room.name : 'Unknown Room';
+  }
+
+  const getMinistry = (ministryId: string) => {
+    const ministry = ministriesList.find(ministry => ministry.id === ministryId);
+    return ministry ? ministry.name : 'Unknown Ministry';
   }
 
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -181,15 +187,12 @@ const WeeklyBookingView = () => {
                                 {booking.startTime} - {booking.endTime}
                               </span>
                             </div>
-                            <div className="flex-1">
-                              <h4 className="font-semibold text-gray-900">{booking.description}</h4>
-                              
+                            <div className='flex-1'>
+                              <p className="text-sm text-gray-500">Booked by {getMinistry(booking.ministry)}</p>
+                              <p className="text-xs text-gray-500">{booking.phoneNumber}</p>
                             </div>
-                            <div className='flex-2'>
-                              <p className="text-sm text-gray-500">Booked by {booking.bookedBy}</p>
-                            </div>
-                            <div className='flex-3'>
-                              <span className="text-xs text-gray-500">{booking.phoneNumber}</span>
+                            <div className="flex-2">
+                              <h2 className="font-semibold text-gray-900">{booking.description}</h2>
                             </div>
                             <div className={`px-3 py-1 rounded-full text-lg border`}>
                               <div className="flex items-center space-x-1">
