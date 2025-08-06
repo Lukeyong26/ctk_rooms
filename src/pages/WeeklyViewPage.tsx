@@ -188,7 +188,7 @@ const WeeklyBookingView = () => {
                               </span>
                             </div>
                             <div className='flex-1'>
-                              <p className="text-sm text-gray-500">Booked by {getMinistry(booking.ministry)}</p>
+                              <p className="text-sm text-gray-500">Booked by {booking.ministry}</p>
                               <p className="text-xs text-gray-500">{booking.phoneNumber}</p>
                             </div>
                             <div className="flex-2">
