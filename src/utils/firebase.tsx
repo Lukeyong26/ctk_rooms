@@ -63,11 +63,11 @@ export const getUserMinistry = async (email: string) => {
   const collectionRef = collection(db, 'ministries');
   const q = query(collectionRef, where("email", "==", email));
   const snapshot = await getDocs(q);
-  let ministry: {id: string, name: string; email: string} | null = null;
+  let ministry: {id: string, name: string; email: string} = {id: '', name: '', email: ''};
   snapshot.forEach((doc) => {
       ministry = {id: doc.id, name: doc.data().name, email: doc.data().email};
   });
-  return ministry;
+  return ministry.name || 'No Ministry Assigned';
 }
 
 export const getMinistries = async () => {

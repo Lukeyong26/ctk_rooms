@@ -113,9 +113,17 @@ export default function Admin() {
             { page === 'pending' && (
               <div className="">
                 <p className="font-semibold text-2xl mb-5">Approve/Delete Pending Bookings</p>
+                {/* Approve All pending button */}
+                <div className="flex flex-row justify-between items-center mb-4">
+                  <p className="text-sm">Pending Bookings: {pendingBookings.length}</p>
+                  <button disabled={pendingBookings.length===0} className="btn btn-lg btn-success" onClick={() => {
+                    setPendingBookings([]);
+                    pendingBookings.forEach((booking) => handleApproveBooking(booking.id));
+                  }}>Approve All</button>
+                </div>
                 <div className="flex w-full flex-col gap-4">
                   {pendingBookings.length === 0 ? (
-                    <p>No pending bookings</p>
+                    <p className="flex items-center justify-center">No pending bookings</p>
                   ) : (
                     pendingBookings.map((booking) => (
                       <div key={booking.id} className="flex flex-row items-center border-gray-300 border-1 p-2 rounded-lg">
