@@ -9,7 +9,7 @@ const WeeklyBookingView = () => {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [bookings, setBookings] = useState<Bookings[]>([]);
   const roomsList = useGeneralStore(state => state.rooms);
-  const ministriesList = useGeneralStore(state => state.ministries);
+  // const ministriesList = useGeneralStore(state => state.ministries);
 
   // Get start of current week (Sunday)
   const getWeekStart = (date: Date) => {
@@ -72,10 +72,10 @@ const WeeklyBookingView = () => {
     return room ? room.name : 'Unknown Room';
   }
 
-  const getMinistry = (ministryId: string) => {
-    const ministry = ministriesList.find(ministry => ministry.id === ministryId);
-    return ministry ? ministry.name : 'Unknown Ministry';
-  }
+  // const getMinistry = (ministryId: string) => {
+  //   const ministry = ministriesList.find(ministry => ministry.id === ministryId);
+  //   return ministry ? ministry.name : 'Unknown Ministry';
+  // }
 
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   // const shortDayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
