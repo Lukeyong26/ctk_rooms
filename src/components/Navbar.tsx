@@ -1,11 +1,21 @@
 import { useState } from "react";
 
 import { useAuthStore } from "../utils/store";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../utils/firebase";
 
 export default function MainNavbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user = useAuthStore((state) => state.user);
   const isAdmin = useAuthStore((state) => state.isAdmin);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log("User is logged in:", user.email);
+    } else {
+      console.log("No user is logged in");
+    }
+  })
 
   return (
     <div className="w-full navbar bg-main dark:bg-mainDark shadow-sm">
@@ -25,7 +35,7 @@ export default function MainNavbar() {
                   <li><a href="/admin">Admin</a></li>
                 </>)
               }
-              <li><a href="profile">User</a></li>
+              <li><a href="profile">Profile</a></li>
             </>
           ) : (<li><a href="/auth/login">Login</a></li>)}
         </ul>
@@ -58,8 +68,11 @@ export default function MainNavbar() {
             {/* <li><a href="/rooms" className="block py-2 px-4 hover:bg-base-200">Available Rooms</a></li> */}
             {user ? (
             <>
-              {isAdmin && <li><a href="/admin">Admin</a></li>}
-              <li><a href="profile">User</a></li>
+              {isAdmin && <>
+                <li><a href="/weekly">Week View</a></li>
+                <li><a href="/admin">Admin</a></li>
+              </>}
+              <li><a href="profile">Profile</a></li>
             </>
           ) : (<li><a href="/auth/login">Login</a></li>)}
           </ul>

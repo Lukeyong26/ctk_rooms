@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import TimePicker from "./TimePicker";
 import { Label, Select, TextInput } from "flowbite-react";
-import { addBooking, getBookingsByDateAndRoom, getMinistries } from "../../utils/firebase";
+import { addBooking, getBookingsByDateAndRoom } from "../../utils/firebase";
 import { useNavigate } from "react-router";
 import { BookingFormData, Room } from "../../utils/types";
 import { format } from "date-fns";
-import { useAuthStore } from "../../utils/store";
+import { useAuthStore, useGeneralStore } from "../../utils/store";
 
 function RoomBookingForm({ multiForm, roomsList, roomID, date }: 
   { multiForm?: boolean, roomsList?: Room[], roomID?: string, date?: string }
@@ -14,29 +14,22 @@ function RoomBookingForm({ multiForm, roomsList, roomID, date }:
   const nav = useNavigate();
   const todaysDate = date? date : format(new Date(), 'yyyy-MM-dd'); // Format YYYY-MM-DD for input type="date"
   const user = useAuthStore((state) => state.user);
-  const ministry = useAuthStore((state) => state.ministry);
+  const UserMinistry = useAuthStore((state) => state.ministry);
   const isAdmin = useAuthStore((state) => state.isAdmin);
-  const [ministries, setMinistries] = useState<any[]>([]);
+  
+  const ministryList = useGeneralStore((state) => state.ministries);
   const [bookings, setBookings] = useState<any[]>([]);
   const [multipleBookings, setMultipleBookings] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
   const [mainFormData, setMainFormData] = useState<BookingFormData>({
     date: todaysDate, roomId: roomID? roomID : '', bookedBy: '', startTime: '', endTime: '', 
-    ministry: ministry || '', phoneNumber: '', email: user?.email || '', description: '', pending: isAdmin? false : true
+    ministry: UserMinistry || '', phoneNumber: '', email: user?.email || '', description: '', pending: isAdmin? false : true
   });
 
   const [multiFormData, setmultiFormData] = useState<any>({
     repeatValue: 1, repeatType: '1', endType: 'eoy', endDate: todaysDate
   });
-
-  useEffect(() => {
-    const fetchMinistries = async () => {
-      const ministriesList = await getMinistries();
-      setMinistries(ministriesList || []);
-    }
-    fetchMinistries();
-  }, []);
 
   useEffect(() => {
     const fetchBookings = async () => {
@@ -151,9 +144,14 @@ function RoomBookingForm({ multiForm, roomsList, roomID, date }:
     let data = null;
     if (name === 'endDate') {
       data = format(new Date(value), 'yyyy-MM-dd');
-    } else {
+    } 
+    else if (name === 'ministry' && isAdmin) {
+      data = ministryList.find((ministry) => ministry.id === value)?.name || '';
+    }
+    else {
       data = value;
     }
+    
     setMainFormData((prevState: any) => ({
       ...prevState,
       [name]: data
@@ -193,19 +191,20 @@ function RoomBookingForm({ multiForm, roomsList, roomID, date }:
         {isAdmin? (
           <Select onChange={handleMainForm} name="ministry">
             <option value="">Select a Ministry</option>
-            {ministries.map((ministry) => (
+            {ministryList.map((ministry) => (
               <option key={ministry.id} value={ministry.id}>{ministry.name}</option>
             ))}
           </Select>
         ): (
           <>
             <div>Email: <Label className="label text-lg">{user?.email}</Label></div>
-            <div>Ministry: <Label className="label text-lg">{ministry}</Label></div>
+            <div>Ministry: <Label className="label text-lg">{UserMinistry}</Label></div>
           </>
         )}
-        
-        
+
         <input type="date" name="date" value={mainFormData.date} required onChange={handleMainForm} className="border-1 rounded-sm p-2 border-gray-300"/>
+
+        <TextInput className="w-full" name="description" placeholder="Purpose of Booking" onChange={handleMainForm}/>
 
         <TimePicker bookings={bookings} setStartTime={(time) => {
           setMainFormData((prevState: any) => ({ ...prevState, startTime: time }));
@@ -215,7 +214,6 @@ function RoomBookingForm({ multiForm, roomsList, roomID, date }:
 
         <TextInput type="text" name="bookedBy" placeholder="Full Name" onChange={handleMainForm}/>
         <TextInput type="text" name="phoneNumber" placeholder="Phone Number" onChange={handleMainForm}/>
-        <TextInput className="w-full" name="description" placeholder="Purpose of Booking" onChange={handleMainForm}></TextInput>
 
         {multiForm && (
           <label className="label" htmlFor="multiple-bookings">

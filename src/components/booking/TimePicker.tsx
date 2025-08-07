@@ -110,13 +110,13 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
     <div>
       <div className="flex flex-row gap-2 mb-4 w-full">
         <div className='flex flex-col md:flex-row gap-2 w-full'>
-          <label className="input">
+          <label className="flex flex-row items-center gap-2 w-1/2">
             <span className="label">Start Time:</span>
-            <p className="text-xs">{startTime}</p>
+            <p className="text-lg">{startTime}</p>
           </label>
-          <label className="input">
+          <label className="flex flex-row items-center gap-2 w-1/2">
             <span className="label">End Time:</span>
-            <p className="text-xs">{endTime}</p>
+            <p className="text-lg">{endTime}</p>
           </label>
         </div>
         

@@ -20,6 +20,8 @@ export default function Root() {
       useAuthStore.getState().setMinistry(userMinistry);
     } else {
       useAuthStore.getState().setIsAdmin(false);
+      useAuthStore.getState().setUser(null);
+      useAuthStore.getState().setMinistry(null);
     }
   });
 
