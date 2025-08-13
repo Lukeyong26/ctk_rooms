@@ -91,8 +91,8 @@ const WeeklyBookingView = () => {
   // };
 
   return (
-    <div className="max-w-7xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="p-6 bg-gray-50 min-h-screen">
+      <div className="bg-white rounded-lg shadow-lg">
         {/* Header */}
         <div className="bg-main text-white p-6">
           <div className="flex items-center justify-between mb-4">

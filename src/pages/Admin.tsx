@@ -1,12 +1,13 @@
 import { Room } from "../utils/types"
-import { addRoom, getBookingsByDateAndRoom, deleteBooking, addMinistry, deleteBookingByQuery, getPendingBookings, approveBooking } from "../utils/firebase"
+import { addRoom, getBookingsByDateAndRoom, deleteBooking, addMinistry} from "../utils/firebase"
 import { Button, Datepicker, Select, TextInput } from "flowbite-react";
 import { useEffect, useState } from "react";
 import RoomBookingForm from "../components/booking/RoomBookingForm";
 import { format } from "date-fns";
-import DeleteBookingList from "../components/Admin/DeleteBookingList";
 import { useAuthStore, useGeneralStore } from "../utils/store";
 import { createUser } from "../utils/firebase_auth";
+import DeleteBookingList from "../components/Admin/DeleteBookingList";
+import PendingBookingList from "../components/Admin/PendingBookingList";
 
 export default function Admin() {
 
@@ -16,26 +17,11 @@ export default function Admin() {
   // Page state
   const [page, setPage] = useState<string>("pending");
 
-  //Pending bookings
-  const [pendingBookings, setPendingBookings] = useState<any[]>([]);
-
   //Delete Booking
-
   const roomsList = useGeneralStore((state) => state.rooms);
   const [selectedRoom, setSelectedRoom] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string>(initDate);
   const [bookingsList, setBookingsList] = useState<any[]>([]);
-
-  // For Pending Bookings
-  useEffect(() => {
-    const fetchPendingBookings = async () => {
-      // Assuming you have a function to get pending bookings
-      const bookings = await getPendingBookings();
-      bookings.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-      setPendingBookings(bookings);
-    }
-    fetchPendingBookings();
-  }, []);
 
   // For Deleting Booking
   useEffect(() => {
@@ -48,6 +34,7 @@ export default function Admin() {
       fetchBookings();
     }
   }, [selectedRoom, selectedDate]);
+
 
   const handleAddRoom = async (e : any) => {
     e.preventDefault();
@@ -84,9 +71,7 @@ export default function Admin() {
     (document.getElementById('add-ministry-form') as HTMLFormElement).reset();
   }
 
-  const handleApproveBooking = async (id: string) => {
-    approveBooking(id);
-  }
+
 
   return (
     <>
@@ -104,53 +89,15 @@ export default function Admin() {
             <li><a className={`${page === 'delete'? 'menu-active': ''}`}  onClick={() => {setPage('delete')}}>Delete A Booking</a></li>
             <li><a className={`${page === 'addRoom'? 'menu-active': ''}`}  onClick={() => {setPage('addRoom')}}>Add a Room</a></li>
             <li><a className={`${page === 'addMinistry'? 'menu-active': ''}`}  onClick={() => {setPage('addMinistry')}}>Add Ministry</a></li>
-            <li><a className={`${page === 'purge'? 'menu-active': ''}`}  onClick={() => {setPage('purge')}}>Dont Touch</a></li>
+            {/* <li><a className={`${page === 'purge'? 'menu-active': ''}`}  onClick={() => {setPage('purge')}}>Dont Touch</a></li> */}
           </ul>
           
           <div className="flex flex-col w-full bg-sub p-4 rounded-lg">
             
             { /* Approve Pending Bookings */}
             { page === 'pending' && (
-              <div className="">
-                <p className="font-semibold text-2xl mb-5">Approve/Delete Pending Bookings</p>
-                {/* Approve All pending button */}
-                <div className="flex flex-row justify-between items-center mb-4">
-                  <p className="text-sm">Pending Bookings: {pendingBookings.length}</p>
-                  <button disabled={pendingBookings.length===0} className="btn btn-lg btn-success" onClick={() => {
-                    setPendingBookings([]);
-                    pendingBookings.forEach((booking) => handleApproveBooking(booking.id));
-                  }}>Approve All</button>
-                </div>
-                <div className="flex w-full flex-col gap-4">
-                  {pendingBookings.length === 0 ? (
-                    <p className="flex items-center justify-center">No pending bookings</p>
-                  ) : (
-                    pendingBookings.map((booking) => (
-                      <div key={booking.id} className="flex flex-row items-center border-gray-300 border-1 p-2 rounded-lg">
-                        <div className="flex flex-col gap-2">
-                          <p>{booking.roomId.toUpperCase()} by {booking.ministry.toUpperCase()}</p>
-                          <p>{format(booking.date,'EEE')}, {format(booking.date, 'dd/MM/yyyy')} - {booking.startTime} to {booking.endTime}</p>
-                          <p>{booking.bookedBy} - {booking.phoneNumber}</p>
-                        </div>
-                        <div className="flex flex-row gap-4 ml-auto">
-                            <button className="btn btn-lg btn-error" onClick={() => {
-                              handleDeleteBooking(booking.id);
-                              setPendingBookings(pendingBookings.filter((b) => b.id !== booking.id));
-                            }}>Delete</button>
-                              <button className="btn btn-lg btn-success" onClick={() => {
-                              handleApproveBooking(booking.id);
-                              setPendingBookings(pendingBookings.filter((b) => b.id !== booking.id));
-                            }}>Approve</button>
-                        </div>
-                        
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
+              <PendingBookingList/>
             )}
-            
-            
 
             {/* Make A Room Booking */}
             { page === 'makeBooking' && (
@@ -212,13 +159,13 @@ export default function Admin() {
               </div>
             )}
 
-            {/* Purge */} 
+            {/*
             { page === 'purge' && (
               <div className="flex w-full flex-col gap-4">
                 <p className="font-semibold text-2xl mb-5">Purge</p>
                 <Button color="alternative" onClick={deleteBookingByQuery}>DEATH</Button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       )}

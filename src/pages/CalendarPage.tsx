@@ -128,7 +128,7 @@ const BookingCalendar = () => {
 
   return (
     <div className="max-w-6xl mx-auto rounded-lg">
-      <div className="bg-surface dark:bg-surfaceDark rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-surface dark:bg-surfaceDark rounded-lg shadow-lg">
         {/* Header */}
         <div className="bg-main text-gray-200 p-6">
           <div className="flex items-center justify-between">

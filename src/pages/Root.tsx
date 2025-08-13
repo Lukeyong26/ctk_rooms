@@ -36,7 +36,7 @@ export default function Root() {
   }, []);
 
   return (
-    <div className='grid grid-rows-[auto_1fr_auto] h-screen w-full'>
+    <div className='h-screen w-full'>
       <MainNavbar/>
       <div className='flex w-full justify-center bg-surface dark:bg-surfaceDark'>
         <div className='p-4 md:p-10 max-w-[1200px] w-full'>
