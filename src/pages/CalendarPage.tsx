@@ -131,19 +131,19 @@ const BookingCalendar = () => {
       <div className="bg-surface dark:bg-surfaceDark rounded-lg shadow-lg">
         {/* Header */}
         <div className="bg-main text-gray-200 p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-center md:justify-between">
+            <div className="hidden md:flex items-center space-x-3">
               <Calendar className="w-8 h-8" />
-              <h1 className="text-2xl font-bold">Calendar View</h1>
+              <h1 className="text-sm md:text-2xl font-bold">Calendar View</h1>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center justify-center space-x-4">
               <button
                 onClick={goToPreviousMonth}
                 className="p-2 hover:bg-accentOne hover:cursor-pointer rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
-              <h2 className="text-xl font-semibold min-w-48 text-center">
+              <h2 className="text-xl font-semibold min-w-32 text-center">
                 {monthNames[month]} {year}
               </h2>
               <button
@@ -161,7 +161,7 @@ const BookingCalendar = () => {
           {/* Day headers */}
           <div className="grid grid-cols-7 gap-0 mb-2">
             {dayNames.map(day => (
-              <div key={day} className="p-3 text-center font-semibold bg-sub">
+              <div key={day} className="p-2 md:p-3 text-sm md:text-lg text-center font-semibold bg-sub">
                 {day}
               </div>
             ))}

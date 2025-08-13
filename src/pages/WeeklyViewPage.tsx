@@ -95,8 +95,8 @@ const WeeklyBookingView = () => {
       <div className="bg-white rounded-lg shadow-lg">
         {/* Header */}
         <div className="bg-main text-white p-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-center md:justify-between mb-4">
+            <div className="hidden md:flex items-center space-x-3">
               <Calendar className="w-8 h-8" />
               <h1 className="text-2xl font-bold">Weekly Room Bookings</h1>
             </div>
@@ -121,14 +121,14 @@ const WeeklyBookingView = () => {
               </button>
             </div>
           </div>
-          <div className="text-lg">
+          <div className="text-center text-sm md:text-lg">
             {weekDays[0].toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} - {' '}
             {weekDays[6].toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </div>
         </div>
 
         {/* Weekly View */}
-        <div className="p-6">
+        <div className="p-2 md:p-6">
           <div className="space-y-6">
             {weekDays.map((day, index) => {
               const dateStr = format(day, 'yyyy-MM-dd');
@@ -139,7 +139,7 @@ const WeeklyBookingView = () => {
                 } else {
                     return a.roomId.localeCompare(b.roomId)
                 }
-            });
+              });
               const today = isToday(day);
 
               return (
@@ -148,10 +148,10 @@ const WeeklyBookingView = () => {
                   <div className={`p-4 border-b ${today ? 'bg-blue-100 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
-                        <h3 className={`text-lg font-semibold ${today ? 'text-blue-800' : 'text-gray-900'}`}>
+                        <h3 className={`text-sm md:text-lg font-semibold ${today ? 'text-blue-800' : 'text-gray-900'}`}>
                           {dayNames[index]}
                         </h3>
-                        <span className={`text-sm ${today ? 'text-blue-600' : 'text-gray-500'}`}>
+                        <span className={`text-xs md:text-sm ${today ? 'text-blue-600' : 'text-gray-500'}`}>
                           {day.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
                         {today && (
@@ -160,8 +160,8 @@ const WeeklyBookingView = () => {
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <span className={`text-sm ${today ? 'text-blue-600' : 'text-gray-500'}`}>
+                      <div className="flex items-center">
+                        <span className={`text-xs md:text-sm ${today ? 'text-blue-600' : 'text-gray-500'}`}>
                           {dayBookings.length} booking{dayBookings.length !== 1 ? 's' : ''}
                         </span>
                         <button
@@ -176,37 +176,38 @@ const WeeklyBookingView = () => {
                   </div>
 
                   {/* Bookings */}
-                  <div className="p-4">
+                  <div className="p-2 md:p-4">
                     {dayBookings.length > 0 ? (
                       <div className="space-y-3">
                         {dayBookings.map(booking => (
-                          <div key={booking.id} className="flex items-center space-x-4 p-4 border border-accentOne bg-sub rounded-lg hover:bg-gray-50 transition-colors">
-                            <div className="flex items-center space-x-2 text-gray-600">
-                              <Clock className="w-4 h-4" />
-                              <span className="font-medium text-sm">
+                          <div key={booking.id} className="flex items-center p-2 border border-accentOne bg-sub rounded-lg hover:bg-gray-50 transition-colors">
+                            <div className="flex items-center gap-1 text-gray-600">
+                              <Clock className="w-4 h-4 hidden md:flex" />
+                              <span className="font-medium text-xs md:text-sm">
                                 {booking.startTime} - {booking.endTime}
                               </span>
                             </div>
-                            <div className='flex-1'>
-                              <p className="text-sm text-gray-500">Booked by {booking.ministry}</p>
-                              <p className="text-xs text-gray-500">{booking.phoneNumber}</p>
+                            <div className='flex flex-col p-2 md:p-4 text-xs md:text-lg'>
+                              <p className="text-gray-500">Booked by {booking.ministry}</p>
+                              <p className="text-gray-500">{booking.phoneNumber}</p>
                             </div>
-                            <div className="flex-2">
-                              <h2 className="font-semibold text-gray-900">{booking.description}</h2>
-                            </div>
-                            <div className={`px-3 py-1 rounded-full text-lg border`}>
-                              <div className="flex items-center space-x-1">
-                                <MapPin className="w-4 h-4" />
-                                <span>{getRoomName(booking.roomId)}</span>
+                            <div className='flex flex-col md:flex-row gap-2 md:gap-4 ml-auto'>
+                              <h2 className="text-xs text-center md:text-lg font-semibold text-gray-900">{booking.description}</h2>
+
+                              <div className='px-3 py-1 rounded-full text-lg border'>
+                                <div className="flex text-xs md:text-lg items-center space-x-1">
+                                  <MapPin className="w-4 h-4" />
+                                  <span>{getRoomName(booking.roomId)}</span>
+                                </div>
                               </div>
-                            </div>
+                            </div>                            
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <Calendar className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                        <p>No bookings scheduled for this day</p>
+                        <p className='text-sm md:text-lg'>No bookings scheduled for this day</p>
                       </div>
                     )}
                   </div>
