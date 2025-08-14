@@ -11,6 +11,7 @@ import LoginPage from './pages/auth/Login';
 import Profile from './pages/Profile';
 import CalendarPage from './pages/CalendarPage';
 import WeeklyBookingView from './pages/WeeklyViewPage';
+import ForgetPasswordPage from './pages/ForgetPasswordPage';
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,7 @@ const router = createBrowserRouter([
         path: 'auth',
         children: [
           {path: 'login', Component: LoginPage},
+          {path: 'reset-password', Component: ForgetPasswordPage}
         ]
       }
     ]

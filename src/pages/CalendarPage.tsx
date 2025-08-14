@@ -217,6 +217,9 @@ const BookingCalendar = () => {
                         <div className="flex-1">
                           {/* <h4 className="font-semibold text-xl text-gray-900 mb-2">{ministries.find(min => min.id === booking.ministry)?.name}</h4> */}
                           <div className="space-y-1 text-sm text-gray-600">
+                            <div>
+                              <span className="font-semibold text-lg">{booking.description}</span> 
+                            </div>
                             <div className="flex items-center space-x-2">
                               <MapPin className="w-4 h-4" />
                               <span>{roomsList.find(room => room.id === booking.roomId)?.name}</span>

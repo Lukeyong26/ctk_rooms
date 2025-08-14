@@ -48,6 +48,12 @@ const LoginPage: React.FC = () => {
                         required
                     />
                 </div>
+                <div className='mb-4'>
+                    {/*forget password link*/}
+                    <a href="/auth/reset-password" className="text-sm text-blue-500 hover:underline">
+                        Forgot Password?
+                    </a>
+                </div>
                 <button
                     type="submit"
                     className="btn w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition"

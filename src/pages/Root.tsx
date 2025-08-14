@@ -36,13 +36,16 @@ export default function Root() {
   }, []);
 
   return (
-    <div className='h-screen w-full'>
+    <div className='flex flex-col h-screen w-full'>
       <MainNavbar/>
-      <div className='flex w-full justify-center bg-surface dark:bg-surfaceDark'>
-        <div className='p-4 md:p-10 max-w-[1200px] w-full'>
-          <Outlet/>
+      <div className='flex-1 bg-surface dark:bg-surfaceDark'>
+        <div className='flex w-full justify-center'>
+          <div className='p-4 md:p-10 max-w-[1200px] w-full'>
+            <Outlet/>
+          </div>
         </div>
       </div>
+      
       <MainFooter />
     </div>
   )

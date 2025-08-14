@@ -138,6 +138,18 @@ export const getBookingsByDateAndRoom = async (date: string, roomId: string) => 
   return bookingsList;
 }
 
+export const getBookingsByEmail = async (email: string) => {
+  let bookingsList: Bookings[] = [];
+
+  const collectionRef = collection(db, 'roomBookings');
+  const q = query(collectionRef, where("email", "==", email));
+  const snapshot = await getDocs(q);
+  snapshot.forEach((doc) => {
+    bookingsList = bookingsList.concat(addBookingToList(doc));
+  });
+  return bookingsList;
+}
+
 export const getPendingBookings = async () => {
   let bookingsList: Bookings[] = [];
 
@@ -168,7 +180,7 @@ const addBookingToList = (doc: QueryDocumentSnapshot): Bookings[] => {
     phoneNumber: doc.data().phoneNumber,
     email: doc.data().email,
     description: doc.data().description,
-    pending: doc.data().pending || true
+    pending: doc.data().pending
   });
   return bookingList;
 }
