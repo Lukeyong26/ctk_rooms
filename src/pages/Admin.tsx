@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import RoomBookingForm from "../components/booking/RoomBookingForm";
 import { format } from "date-fns";
 import { useAuthStore, useGeneralStore } from "../utils/store";
-import { createUser } from "../utils/firebase_auth";
 import DeleteBookingList from "../components/Admin/DeleteBookingList";
 import PendingBookingList from "../components/Admin/PendingBookingList";
 
@@ -65,8 +64,8 @@ export default function Admin() {
       name: name,
       email: formData.get('email') as string,
     }
-    const randPassword = Math.random().toString(36).slice(-8); // Generate a random password
-    await createUser(ministry.email, randPassword); // Default password, change as needed
+    // const randPassword = Math.random().toString(36).slice(-8); // Generate a random password
+    // await createUser(ministry.email, randPassword); // Default password, change as needed
     await addMinistry(ministry);
     (document.getElementById('add-ministry-form') as HTMLFormElement).reset();
   }
@@ -150,7 +149,7 @@ export default function Admin() {
             { page === 'addMinistry' && (
               <div className="flex w-full flex-col gap-4">
                 <p className="font-semibold text-2xl">Add Ministry</p>
-                <p> NOTE: Adding a ministry will create a new account for them to use in the portal.</p>
+                {/* <p> NOTE: Adding a ministry will create a new account for them to use in the portal.</p> */}
                 <form id="add-ministry-form" onSubmit={handleAddMinistry} className="flex w-full flex-col gap-4">
                   <TextInput type="text" name="name" placeholder="Ministy Name" required />
                   <TextInput type="text" name="email" placeholder="Ministry Email" required />

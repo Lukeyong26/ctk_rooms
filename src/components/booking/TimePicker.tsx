@@ -32,15 +32,21 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
     });
   
     if (isRoomBooked) {
-      alert("Room is already booked for the selected time. Please choose another time.");
+      const modal = document.getElementById('bookedRoomModal');
+      if (modal) {
+        (modal as HTMLDialogElement).showModal();
+      }
       setStartTimeState('');
       setEndTimeState('');
       setPickEndTime(false);
       return;
     }
 
-    if (startTime > endTime) {
-      alert("Start time must be before end time.");
+    if (startTime >= endTime) {
+      const modal = document.getElementById('startTimeModal');
+      if (modal) {
+        (modal as HTMLDialogElement).showModal();
+      }
       setStartTimeState('');
       setEndTimeState('');
       setPickEndTime(false);
@@ -92,7 +98,7 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
         );
       } else {
         timeSlots.push(
-          <button key={hour} onClick={() => {
+          <button type='button' key={hour} onClick={() => {
             const endHour = hour + 1;
             const endHourString = `${endHour.toString().padStart(2, '0')}:00`;
             handleEndTimeChange(endHourString)
@@ -120,7 +126,7 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
           </label>
         </div>
         
-        <button className='btn' onClick={() => {
+        <button type='button' className='btn' onClick={() => {
           setStartTimeState('');
           setEndTimeState('');
           setPickEndTime(false);
@@ -129,6 +135,29 @@ const TimePicker: React.FC<TimePrickerProps> = ({bookings, setStartTime, setEndT
       <div className='grid grid-cols-2 md:grid-cols-4 gap-1'>
       {renderTimeSlots()}
       </div>
+
+      {/* Alert Modals for Errors */}
+      <dialog id="bookedRoomModal" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+          </form>
+          <h3 className="font-bold text-lg">Sorry!</h3>
+          <p className="py-4">Room is already booked for that timeslot.</p>
+        </div>
+      </dialog>
+
+      <dialog id="startTimeModal" className="modal">
+        <div className="modal-box">
+          <form method="dialog">
+            {/* if there is a button in form, it will close the modal */}
+            <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+          </form>
+          <h3 className="font-bold text-lg">Sorry!</h3>
+          <p className="py-4">The End time must be after the Start time.</p>
+        </div>
+      </dialog>
       
     </div>
     
